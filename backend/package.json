@@ -1,0 +1,14 @@
+{
+  "name": "ecommerce",
+  "version": "1.0.0",
+  "description": "This the the Ecommerce platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bijay Kumar Yadav",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}
