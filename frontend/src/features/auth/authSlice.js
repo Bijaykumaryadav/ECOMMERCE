@@ -1,19 +1,21 @@
-import { createSlice } from '@reduxjs/toolkit';
+const {createSlice} = require("@reduxjs/toolkit");
 
 const initialState = {
-  theme: localStorage.getItem('theme') || 'light',
-};
+    isAuthenticated: false,
+    isLoading: false,
+    user: null,
+}
 
-const themeSlice = createSlice({
-  name: 'theme',
-  initialState,
-  reducers: {
-    toggleTheme: (state) => {
-      state.theme = state.theme === 'light' ? 'dark' : 'light';
-      localStorage.setItem('theme', state.theme);
-    },
-  },
-});
+const authSlice = createSlice({
+    name: "auth",
+    initialState,
+    reducers: {
+        setUser: (state,action) => {
 
-export const { toggleTheme } = themeSlice.actions;
-export default themeSlice.reducer;
+        }
+    }
+})
+
+export const {setUser } = authSlice.actions;
+
+export default authSlice.reducer;

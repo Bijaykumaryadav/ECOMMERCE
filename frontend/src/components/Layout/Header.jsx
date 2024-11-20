@@ -5,7 +5,7 @@ import { MdDarkMode, MdLightMode } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { HiOutlineMenuAlt3, HiOutlineX } from "react-icons/hi";
 import { useSelector, useDispatch } from "react-redux";
-import { toggleTheme } from "../../features/auth/authSlice";
+import { toggleTheme } from "../../features/auth/themeSlice";
 
 const Header = () => {
   const theme = useSelector((state) => state.theme.theme); 
