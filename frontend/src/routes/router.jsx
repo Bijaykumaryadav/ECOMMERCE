@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { HomePage, ErrorPage, LayoutPage } from "../pages";
+import Auth from "@/components/Auth/Auth";
 
 export const router = createBrowserRouter([
     {
@@ -10,6 +11,10 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 element: <HomePage />
+            },
+            {
+                path: "auth",
+                element: <Auth/>
             }
         ]
     }
