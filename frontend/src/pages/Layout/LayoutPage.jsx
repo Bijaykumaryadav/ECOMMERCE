@@ -1,5 +1,5 @@
 import React from 'react'
-import { Footer, Header } from '../components/Layout';
+import { Footer, Header } from '../../components/Layout';
 import { Outlet } from 'react-router-dom';
 
 function LayoutPage() {
