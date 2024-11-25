@@ -2,6 +2,14 @@ import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import { FaArrowRight } from "react-icons/fa6";
+import {
+  signUp,
+  googleSignUp,
+  selectIsLoading,
+  selectShowVerificationOverlay,
+  setShowVerificationOverlay
+} from '../../features/auth/authSlice';
+import { useDispatch } from "react-redux";
 // import Util from "../../helpers/Util";
 // import { toast } from "react-toastify";
 // import VerifyPage from "./VerifyPage";
@@ -16,59 +24,27 @@ const SignUp = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
   const [showOverlay, setShowOverlay] = useState(false); // Overlay state
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
-  const handleSignUp = async (e) => {
-    e.preventDefault();
-
-    // Check if passwords match
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match.");
-      return; // Prevent further execution
-    }
-
-    // Check if terms and conditions are accepted
-    if (!isAgreed) {
-      toast.error("Tick Accept Terms and Privacy Policy.");
-      return; // Prevent further execution
-    }
-
-    // // Proceed with sign-up if validations pass
-    // try {
-    //   setIsLoading(true)
-    //   Util.call_Post_by_URI(
-    //     "user/signup",
-    //     {
-    //       firstName: name,
-    //       email,
-    //       password,
-    //     },
-    //     (res, status) => {
-    //       setIsLoading(false)
-    //       if (status && res?.success) {
-    //         toast.success("Sign-up successful! Please verify your email.", {
-    //           autoClose: 2000,
-    //         });
-    //         // Show the overlay for the verification page
-    //         setShowOverlay(true);
-    //         // Clear the form fields after successful submission
-    //         // clearForm();
-    //       } else if (res?.message === "Please verify your email to continue") {
-    //         toast.info(res?.message || "Please verify your email.", {
-    //           autoClose: 2000,
-    //         });
-    //         setShowOverlay(true); // Show overlay for email verification
-    //       } else {
-    //         toast.error(res?.message || "Sign-up failed.");
-    //       }
-    //     }
-    //   );
-    // } catch (error) {
-    //   console.log(error);
-    //   toast.error("Something went wrong. Please try again.");
-    // }
-    // setIsLoading(false)
-  };
+const handleSignUp = async (e) => {
+  e.preventDefault();
+  
+  try {
+    await dispatch(signUp({
+      name,
+      email,
+      password,
+      confirmPassword,
+      isAgreed
+    })).unwrap();
+    
+    // Form will be cleared automatically if signup is successful
+  } catch (error) {
+    // Error handling is managed by the slice
+    console.error('Signup error:', error);
+  }
+};
 
   // Function to clear form fields
   const clearForm = () => {
