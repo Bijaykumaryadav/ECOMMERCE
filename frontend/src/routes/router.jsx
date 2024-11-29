@@ -7,7 +7,7 @@ import { ShoppingAccount, ShoppingCheckout, ShoppingHomePage, ShoppingListingPag
 import CheckAuth from "@/components/Common/CheckAuth";
 import AdminLayout from "@/components/AdminView/AdminLayout";
 import UnauthPage from "@/pages/Layout/UnauthPage";
-import AuthRegister from "@/pages/Auth/register";
+import {ResetPassword,ForgotPassword,GoogleCallback} from "../pages/Auth/index"
 
 const isAuthenticated = true;
 const user = {
@@ -81,6 +81,28 @@ export const router = createBrowserRouter([
                         path: "account",
                         element: <ShoppingAccount/>
                     }
+                ]
+            },
+            {
+                path: "users",
+                children: [
+                    {
+                        path : "forgotpassword",
+                        element: <ForgotPassword/>
+                    },
+                    {
+                        path: "resetpassword",
+                        element: <ResetPassword />
+                    },
+                    {
+                        path: "auth",
+                        children: [
+                        {
+                            path: "googleCallback",
+                            element: <GoogleCallback />,
+                        },
+                        ],
+                    },
                 ]
             },
             {

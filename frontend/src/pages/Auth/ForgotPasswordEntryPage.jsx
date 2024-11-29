@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import OtpPage from './ResetOtpPage';
+import OtpPage from '../../components/Auth/ResetOtpPage';
 import { toast } from "react-toastify";
-import Util from "../../../helpers/Util";
+import Util from "../../helpers/Util";
 
 function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -77,7 +77,7 @@ function ForgotPassword() {
               className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overlay-background"
             >
               <div className="w-full p-6 bg-white rounded-lg min-h-[300px] min-w-[300px] xs:max-w-[300px] sm:max-w-[424px] md:max-w-[424px]">
-                <OtpPage email={email} />
+                <OtpPage email={email} setShowOverlay={setShowOverlay} />
               </div>
             </div>
           )}

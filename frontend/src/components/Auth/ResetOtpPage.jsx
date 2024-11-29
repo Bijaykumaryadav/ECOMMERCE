@@ -1,47 +1,46 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-// import { toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 // import Util from '../../../helpers/Util';
 
-function OtpPage({email}) {
+function OtpPage({email ,setShowOverlay}) {
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
-  const [showOverlay,setShowOverlay] = useState(false);
 
   const handleResetVerify = (e) => {
-    // e.preventDefault();
-    // try {
-    //   Util.call_Post_by_URI("users/verify-resetotp", { otp }, (res, status) => {
-    //     console.log("API Response:", res); // Add this line
-    //     if (status && res?.success) {
-    //       sessionStorage.setItem("resetToken", res.token);
-    //       setTimeout(() => {
-    //         navigate("/users/resetpassword");
-    //       }, 2000);
-    //     } else {
-    //       toast.error(res.message, { autoClose: 2000 });
-    //     }
-    //   });
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    e.preventDefault();
+    try {
+      Util.call_Post_by_URI("users/verify-resetotp", { otp }, (res, status) => {
+        console.log("API Response:", res); // Add this line
+        if (status && res?.success) {
+          sessionStorage.setItem("resetToken", res.token);
+          setTimeout(() => {
+            navigate("/users/resetpassword");
+          }, 2000);
+        } else {
+          toast.error(res.message, { autoClose: 2000 });
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
     // New function to handle resend code
   const handleResendCode = () => {
-    // Util.call_Post_by_URI(
-    //   "users/resend-resetotp",
-    //   { email },
-    //   (res, status) => {
-    //     if (status && res?.success) {
-    //       toast.success("Verification code resent successfully", {
-    //         autoClose: 2000,
-    //       });
-    //     } else {
-    //       toast.error(res?.message);
-    //     }
-    //   }
-    // );
+    Util.call_Post_by_URI(
+      "users/resend-resetotp",
+      { email },
+      (res, status) => {
+        if (status && res?.success) {
+          toast.success("Verification code resent successfully", {
+            autoClose: 2000,
+          });
+        } else {
+          toast.error(res?.message);
+        }
+      }
+    );
   };
 
   return (
@@ -77,7 +76,7 @@ function OtpPage({email}) {
             />
           </label>
           <button className="flex justify-center items-center w-full text-[14px] leading-[48px] mt-[16px] font-semibold text-[#ffffff] h-[48px] transition-colors duration-300 bg-blue-500 hover:bg-blue-800 tracking-[1.2%] rounded-[15px]">
-            RESET PASSWORD &nbsp;
+            RESET PASSWORD  &nbsp;
           </button>
           <button
             type="button"

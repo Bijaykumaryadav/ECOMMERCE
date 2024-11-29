@@ -2,17 +2,11 @@ import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import { FaArrowRight } from "react-icons/fa6";
-import {
-  signUp,
-  googleSignUp,
-  selectIsLoading,
-  selectShowVerificationOverlay,
-  setShowVerificationOverlay
-} from '../../features/auth/authSlice';
 import { useDispatch } from "react-redux";
-// import Util from "../../helpers/Util";
-// import { toast } from "react-toastify";
-// import VerifyPage from "./VerifyPage";
+import Util from "../../helpers/Util";
+import { toast } from "react-toastify";
+import VerifyPage from "../../components/Auth/VerifyPage";
+// import Util from "@/helpers/Util";
 // import Loader from "../../components/Loader/Loader";
 
 const SignUp = () => {
@@ -23,26 +17,47 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
-  const [showOverlay, setShowOverlay] = useState(false); // Overlay state
+  const [showOverlay, setShowOverlay] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
 const handleSignUp = async (e) => {
   e.preventDefault();
-  
+
+  // Proceed with sign-up if validations pass
   try {
-    await dispatch(signUp({
-      name,
-      email,
-      password,
-      confirmPassword,
-      isAgreed
-    })).unwrap();
-    
-    // Form will be cleared automatically if signup is successful
+    Util.call_Post_by_URI(
+      "users/signup",
+      {
+        name,
+        email,
+        password,
+      },
+      (res, status) => {
+        if (status && res?.success) {
+          toast.success("Please verify your email.", {
+            autoClose: 2000,
+          });
+          setShowOverlay(true); 
+        } else if (res?.message === "Please verify your email to continue") {
+          // Only show the toast if it's not already showing
+          // toast.info("Please verify your email to continue.", {
+          //   autoClose: 2000,
+          // });
+          setShowOverlay(true);
+        } else if(res?.message === "Account already exists"){
+          toast.error(res?.message === "User already exists");
+          clearForm();
+        }else{
+          toast.error(res?.message || "Sign-up failed.");
+          clearForm(); // Clear the form fields
+        }
+      }
+    );
   } catch (error) {
-    // Error handling is managed by the slice
-    console.error('Signup error:', error);
+    clearForm(); // Clear the form fields
+    console.log(error);
+    toast.error("Something went wrong. Please try again.");
   }
 };
 
@@ -61,6 +76,11 @@ const handleSignUp = async (e) => {
       setShowOverlay(false);
     }
   };
+
+      const handleGoogleSignIn = () => {
+      window.location.href =
+        "http://localhost:8000/apis/v1/users/auth/google";
+    };
 
   return (
     <>
@@ -201,7 +221,7 @@ const handleSignUp = async (e) => {
           type="button"
         >
           <FcGoogle className="w-5 h-5" />
-          <span className="flex-grow text-center">Sign up with Google</span>
+          <span className="flex-grow text-center" onClick={handleGoogleSignIn}>Sign up with Google</span>
         </button>
       </form>
 
@@ -211,7 +231,7 @@ const handleSignUp = async (e) => {
           className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overlay-background"
         >
           <div className="bg-[#D9D9D9] p-6 rounded-lg w-full min-h-[300px] xs:max-w-[300px] sm:max-w-[424px] md:max-w-[424px]">
-            <VerifyPage email={email} />
+            <VerifyPage email={email} setShowOverlay={setShowOverlay} />
           </div>
         </div>
       )}

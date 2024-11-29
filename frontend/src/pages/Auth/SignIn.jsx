@@ -4,7 +4,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { FaArrowRight } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "react-toastify";
-// import Util from "../../helpers/Util";
+import Util from "../../helpers/Util";
 import { useDispatch, useSelector } from "react-redux";
 // import { login } from "../../store/userSlice";
 // import Loader from "../../components/Loader/Loader";
@@ -20,30 +20,30 @@ const SignIn = () => {
 
   const handleSignIn = async (e) => {
 
-    // e.preventDefault();
-    // try {
-    //   setIsLoading(true);
-    //   Util.call_Post_by_URI("user/signin", {
-    //     email,
-    //     password,
-    //   }, (res, status) => {
-    //     setIsLoading(false);
-    //     if (status) {
-    //       dispatch(login({ userInfo: "", token: res.token })); // Save user to Redux
-    //       Util.auth(dispatch);
-    //       toast.success("Sign-in successful!", { autoClose: 2000 }); // toast.update(res.message)
-    //       setTimeout(() => {
-    //         navigate("/profile");
-    //       }, 1000);
-    //     }else {
-    //       toast.error(res.message, { autoClose: 2000 })
-    //     }
-    //   } );
-    // } catch (error) {
-    //   toast.error("An error occurred while signing in. Please try again.", { autoClose: 2000 });
-    //   console.error(error); // Log the error to console for debugging
-    // }
-    // setIsLoading(false);
+    e.preventDefault();
+    try {
+      setIsLoading(true);
+      Util.call_Post_by_URI("users/signin", {
+        email,
+        password,
+      }, (res, status) => {
+        setIsLoading(false);
+        if (status) {
+          dispatch(login({ userInfo: "", token: res.token })); // Save user to Redux
+          Util.auth(dispatch);
+          toast.success("Sign-in successful!", { autoClose: 2000 }); // toast.update(res.message)
+          setTimeout(() => {
+            navigate("/profile");
+          }, 1000);
+        }else {
+          toast.error(res.message, { autoClose: 2000 })
+        }
+      } );
+    } catch (error) {
+      toast.error("An error occurred while signing in. Please try again.", { autoClose: 2000 });
+      console.error(error); // Log the error to console for debugging
+    }
+    setIsLoading(false);
   }
 
   return (
@@ -64,12 +64,12 @@ const SignIn = () => {
       </label>
 
       {/* Password and Forgot Password section */}
-      <label className="relative flex flex-col w-full" htmlFor="password">
-        <div className="flex justify-between items-center text-[14px] leading-[20px] text-[#191c1f]">
-          <span className="w-auto">Password</span>
-          {email && <Link to={"/auth/forgotpassword/"+ email} className="text-blue-600">
-            Forgot Password
-          </Link>}
+        <label className="w-full mb-4" htmlFor="password">
+          <div className="flex items-center justify-between mt-2">
+            <span className="w-auto">Password</span>
+            <Link to="/users/forgotpassword" className="text-blue-500">
+              Forgot Password
+            </Link>
         </div>
 
         <div className="relative w-full">

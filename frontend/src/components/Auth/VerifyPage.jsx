@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
-// import Util from "../../../helpers/Util";
+import Util from "@/helpers/Util";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -9,43 +9,43 @@ function VerifyPage({ email, setShowOverlay }) {
   const navigate = useNavigate();
 
   const handleVerify = (e) => {
-    // e.preventDefault();
-    // try {
-    //   Util.call_Post_by_URI(
-    //     "users/verify",
-    //     { otp },
-    //     (res, status) => {
-    //       if (status && res?.success) {
-    //         toast.success(res.message, { autoClose: 2000 });
-    //         setTimeout(() => {
-    //           navigate(0);
-    //         }, 2000);
-    //       } else {
-    //         toast.error(res.message, { autoClose: 2000 });
-    //       }
-    //     }
-    //   );
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    e.preventDefault();
+    try {
+      Util.call_Post_by_URI(
+        "users/verify",
+        { otp },
+        (res, status) => {
+          if (status && res?.success) {
+            toast.success(res.message, { autoClose: 2000 });
+            setTimeout(() => {
+              navigate(0);
+            }, 2000);
+          } else {
+            toast.error(res.message, { autoClose: 2000 });
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // New function to handle resend code
-//   const handleResendCode = () => {
-//     Util.call_Post_by_URI(
-//       "/users/resend-signupotp",
-//       { email },
-//       (res, status) => {
-//         if (status && res?.success) {
-//           toast.success("Verification code resent successfully", {
-//             autoClose: 2000,
-//           });
-//         } else {
-//           toast.error(res?.message || "Failed to resend verification code");
-//         }
-//       }
-//     );
-//   };
+  const handleResendCode = () => {
+    Util.call_Post_by_URI(
+      "/users/resend-signupotp",
+      { email },
+      (res, status) => {
+        if (status && res?.success) {
+          toast.success("Verification code resent successfully", {
+            autoClose: 2000,
+          });
+        } else {
+          toast.error(res?.message || "Failed to resend verification code");
+        }
+      }
+    );
+  };
 
   return (
     <div className="flex flex-col items-center justify-center bg-[#D9D9D9] shadow-lg min-w-[280px] xs:w-full xs:max-w-xs sm:max-w-[424px] md:max-w-[424px] border border-blue-500 rounded-md overflow-hidden transition-all duration-300 pb-6">
