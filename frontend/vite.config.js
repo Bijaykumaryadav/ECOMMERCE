@@ -9,5 +9,9 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    build: {
+    outDir: "dist", // This is the default, change if needed
+  },
+  chunkSizeWarningLimit: 1000, // Adjust this value to avoid chunk size warnings
   },
 })

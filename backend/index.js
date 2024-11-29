@@ -10,6 +10,7 @@ const MongoStore = require("connect-mongo");
 require("./middleware/passport-google-strategy");
 require("./middleware/passport-jwt-strategy");
 const cors = require("cors");
+const path = require("path");
 
 // for routes to accept the json files
 app.use(express.urlencoded({ extended: true }));
@@ -64,3 +65,19 @@ app.use("/apis/v1",require("./routes"));
 app.listen(port,()=>{
     console.log(`Server is running on port ${port}`);
 })
+
+/*---------------------DEPLOYMENT-----------------------*/
+
+const __dirname1 = path.resolve();
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname1, "/frontend/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname1, "frontend", "dist", "index.html"));
+  });
+} else {
+  app.get("/", (req, res) => {
+    res.send("Running on development");
+  });
+}
+
+/*---------------------DEPLOYMENT-----------------------*/
