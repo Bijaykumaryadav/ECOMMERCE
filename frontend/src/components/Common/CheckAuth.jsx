@@ -1,7 +1,12 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import Util from "../../helpers/Util";
+import { useDispatch, useSelector } from "react-redux";
+
 
 function CheckAuth({ isAuthenticated, user, children }) {
+    const dispatch = useDispatch();
+    // const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     const location = useLocation();
 
     // Redirect to auth page if the user is not authenticated
@@ -28,7 +33,7 @@ function CheckAuth({ isAuthenticated, user, children }) {
         return <Navigate to="/admin/dashboard" />;
     }
 
-    return <>{children}</>;
+  return isAuthenticated ? children : <Navigate to="/auth" />;
 }
 
 export default CheckAuth;

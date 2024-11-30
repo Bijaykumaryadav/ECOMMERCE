@@ -16,7 +16,7 @@ function GoogleCallback() {
     //You can store it in local storage,state,or use it as needed
     // dispatch(login({ userInfo: "", token }));
     toast.success("Signed in Successful");
-    navigate("/users/dashboard");
+    navigate("/shop");
   }, [location.search]);
 
   return <div>redirecting....</div>;

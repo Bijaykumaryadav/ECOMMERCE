@@ -16,14 +16,14 @@ const Util = {
     localStorage.removeItem("token");
   },
   isTokenExpired: (token) => {
-    // console.log("Token received for expiration check:", token); // Debug log
+    // console.log("Token received for expiration check:", token); 
     if (!token || token.split(".").length !== 3) {
       console.error("Invalid token format:", token);
-      return true; // Invalid token means expired
+      return true; 
     }
     const decoded = jwtDecode(token);
-    const currentTime = Date.now() / 1000; // Current time in seconds
-    return decoded.exp < currentTime; // Check if the current time is greater than the expiration time
+    const currentTime = Date.now() / 1000; 
+    return decoded.exp < currentTime; 
   },
 
   auth: async (dispatch) => {
@@ -34,7 +34,7 @@ const Util = {
     if (Util.isTokenExpired(token)) {
       console.log(token);
       Util.removeToken();
-      return false; // Token expired
+      return false; 
     }
 
     try {
@@ -45,12 +45,12 @@ const Util = {
         },
       });
       console.log("userInfo",res);
-      dispatch(login({ userInfo: res.data.user , token}));
-      return true; // Successfully authenticated
+      dispatch(setUser({ user: res.data.user , token}));
+      return true; 
     } catch (error) {
       console.log("Auth error:", error);
       Util.removeToken();
-      return false; // Failed to authenticate
+      return false; 
     }
   },
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { FaArrowRight } from "react-icons/fa6";
@@ -6,7 +6,7 @@ import { FcGoogle } from "react-icons/fc";
 import { toast } from "react-toastify";
 import Util from "../../helpers/Util";
 import { useDispatch, useSelector } from "react-redux";
-// import { login } from "../../store/userSlice";
+import { setUser } from "../../features/auth/authSlice";
 // import Loader from "../../components/Loader/Loader";
 
 const SignIn = () => {
@@ -18,33 +18,55 @@ const SignIn = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleSignIn = async (e) => {
-
-    e.preventDefault();
-    try {
-      setIsLoading(true);
-      Util.call_Post_by_URI("users/signin", {
+const handleSignIn = async (e) => {
+  e.preventDefault();
+  try {
+    // setIsLoading(true); // Start loading
+    Util.call_Post_by_URI(
+      "users/signin",
+      {
         email,
         password,
-      }, (res, status) => {
-        setIsLoading(false);
-        if (status) {
-          dispatch(login({ userInfo: "", token: res.token })); // Save user to Redux
-          Util.auth(dispatch);
-          toast.success("Sign-in successful!", { autoClose: 2000 }); // toast.update(res.message)
+      },
+      (res, status) => {
+        // setIsLoading(false); // Stop loading after response
+
+        if (status && res?.success) {
+          // Successful login
+          console.log("34",res);
+          toast.success(res?.message || "Sign-in successful!", {
+            autoClose: 2000,
+          });
+          dispatch(setUser({ user: "", token: res.token })); 
           setTimeout(() => {
-            navigate("/profile");
+            navigate("/shop");
           }, 1000);
-        }else {
-          toast.error(res.message, { autoClose: 2000 })
+        } else if (
+          res?.message === "Email not verified. Verification email has been resent."
+        ) {
+          setShowOverlay(true); // Show verification overlay
+        } else {
+          // Handle other errors
+          toast.error(res?.message || "Sign-in failed. Please try again.", {
+            autoClose: 2000,
+          });
         }
-      } );
-    } catch (error) {
-      toast.error("An error occurred while signing in. Please try again.", { autoClose: 2000 });
-      console.error(error); // Log the error to console for debugging
-    }
-    setIsLoading(false);
+      }
+    );
+  } catch (error) {
+    // setIsLoading(false); // Stop loading on error
+    console.error("Error during sign-in:", error);
+    toast.error("Something went wrong. Please try again.", {
+      autoClose: 2000,
+    });
   }
+};
+
+
+    const handleGoogleSignIn = () => {
+    window.location.href =
+      "http://localhost:8000/apis/v1/users/auth/google";
+  };
 
   return (
     <form
@@ -118,7 +140,8 @@ const SignIn = () => {
       {/* Google Sign-In Button */}
       <button
         className="flex justify-between items-center w-full h-[44px] px-4 py-2 mt-2 text-[#475156] border border-blue-600 rounded-[15px] hover:bg-gray-100"
-        type="button"
+        type="button" onClick={handleGoogleSignIn}
+
       >
         <FcGoogle className="h-[20px] w-[20px]" />
         <span className="flex-grow text-center">Login with Google</span>
