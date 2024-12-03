@@ -17,7 +17,19 @@ const SignIn = () => {
 //   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [showOverlay, setShowOverlay] = useState(false); 
+  
 
+// const handleSignIn = (e) => {
+//   e.preventDefault();
+//   dispatch(signIn({ email, password })).then((data) => {
+//     if(data?.payload?.success){
+//     toast.success(data?.payload?.message);
+//     }else{
+//       toast.error(data?.payload?.message);
+//     }
+//   });
+// };
 const handleSignIn = async (e) => {
   e.preventDefault();
   try {
@@ -37,9 +49,10 @@ const handleSignIn = async (e) => {
           toast.success(res?.message || "Sign-in successful!", {
             autoClose: 2000,
           });
-          dispatch(setUser({ user: "", token: res.token })); 
+          dispatch(setUser({ user: res.user || "", token: res.token }));
+          Util.auth(dispatch); 
           setTimeout(() => {
-            navigate("/shop");
+            navigate("/shop/home");
           }, 1000);
         } else if (
           res?.message === "Email not verified. Verification email has been resent."
@@ -69,6 +82,7 @@ const handleSignIn = async (e) => {
   };
 
   return (
+  <>
     <form
       className="flex flex-col items-center space-y-4 text-left w-full md:max-w-[360px] xs:max-w-xs sm:max-w-sm xs:px-3 md:px-0"
       onSubmit={handleSignIn}
@@ -147,6 +161,16 @@ const handleSignIn = async (e) => {
         <span className="flex-grow text-center">Login with Google</span>
       </button>
     </form>
+
+      {/* Overlay for the verification code */}
+      {showOverlay && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overlay-background">
+          <div className="w-full p-6 bg-white rounded-lg min-h-[300px] min-w-[300px] xs:max-w-[300px] sm:max-w-[424px] md:max-w-[424px]">
+            <VerifyPage email={email} setShowOverlay={setShowOverlay} />
+          </div>
+        </div>
+      )}
+      </>
   );
 };
 

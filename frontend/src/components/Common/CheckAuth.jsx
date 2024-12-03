@@ -1,13 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import Util from "../../helpers/Util";
 import { useDispatch, useSelector } from "react-redux";
+import { Skeleton } from "@/components/ui/skeleton"
 
-
-function CheckAuth({ isAuthenticated, user, children }) {
-    const dispatch = useDispatch();
-    // const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+function CheckAuth({ children }) {
     const location = useLocation();
+    const dispatch = useDispatch();
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+    const user = useSelector((state) => state.auth.user);
+    const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      Util.auth(dispatch).finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, [isAuthenticated, dispatch]);
+
+  if (loading) {
+    return <Skeleton className="w-full h-[600px] bg-black" />; 
+  }
+
 
     // Redirect to auth page if the user is not authenticated
     if (!isAuthenticated && !location.pathname.includes("/auth")) {
@@ -18,7 +33,7 @@ function CheckAuth({ isAuthenticated, user, children }) {
     if (isAuthenticated && location.pathname.includes("/auth")) {
         if (user?.role === "admin") {
             return <Navigate to="/admin/dashboard" />;
-        } else if (user?.role === "user") {
+        } else if (user?.role === "users") {
             return <Navigate to="/shop/home" />;
         }
     }

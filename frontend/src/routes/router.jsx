@@ -11,14 +11,6 @@ import {ResetPassword,ForgotPassword,GoogleCallback} from "../pages/Auth/index"
 import { useDispatch, useSelector } from "react-redux";
 
 
-const isAuthenticated = true;
-const user = {
-    name: "Bijay",
-    role: "user",
-};
-
-
-
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -36,7 +28,7 @@ export const router = createBrowserRouter([
             {
                 path: "admin",
                 element: (
-                    <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+                    <CheckAuth>
                         <AdminLayout />
                     </CheckAuth>
                 ),
@@ -62,7 +54,7 @@ export const router = createBrowserRouter([
             {
                 path: "shop",
                 element: (
-              <CheckAuth isAuthenticated={isAuthenticated} user={user}>
+              <CheckAuth>
                 <ShoppingLayout />
               </CheckAuth>
             ),

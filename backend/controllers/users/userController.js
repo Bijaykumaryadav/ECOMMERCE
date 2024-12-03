@@ -390,7 +390,7 @@ module.exports.sendUserDetails = async (req, res) => {
     console.log(userId);
 
     // Find the user in the database
-    const user = await User.findById(userId).select("name email profileImage");
+    const user = await User.findById(userId).select("name email profileImage role");
     console.log(user);
 
     if (user) {

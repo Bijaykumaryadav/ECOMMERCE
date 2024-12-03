@@ -2,6 +2,7 @@ import axios from "axios";
 import constants from "../constants/constants";
 import {jwtDecode} from 'jwt-decode';
 import { toast } from "react-toastify";
+import { setUser } from "@/features/auth/authSlice";
 // import { login } from "../features/auth/authSlice";
 
 // const token = useSelector((state) => state.auth.token);
