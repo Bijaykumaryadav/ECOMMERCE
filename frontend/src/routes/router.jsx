@@ -54,9 +54,9 @@ export const router = createBrowserRouter([
             {
                 path: "shop",
                 element: (
-              <CheckAuth>
-                <ShoppingLayout />
-              </CheckAuth>
+                <CheckAuth>
+                    <ShoppingLayout />
+                </CheckAuth>
             ),
                 children: [
                     {

@@ -1,13 +1,13 @@
 import Util from "../helpers/Util";
 
 
-// const getApiUrl = () => {
-//   return "/apis/v1/";
-// };
-
 const getApiUrl = () => {
-  return "http://localhost:8000/apis/v1/";
+  return "https://ecommerce-brg8.onrender.com/apis/v1/";
 };
+
+// const getApiUrl = () => {
+//   return "http://localhost:8000/apis/v1/";
+// };
 
 const constants = {
   URL: getApiUrl(),
