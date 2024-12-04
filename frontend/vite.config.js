@@ -6,12 +6,12 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
     resolve: {
+  build: {
+    outDir: "dist", 
+  },
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    build: {
-    outDir: "dist", // This is the default, change if needed
-  },
-  chunkSizeWarningLimit: 1000, // Adjust this value to avoid chunk size warnings
+  chunkSizeWarningLimit: 1000, 
   },
 })
