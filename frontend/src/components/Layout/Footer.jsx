@@ -125,7 +125,7 @@ const Footer = () => {
         </div>
 
         {/* Divider */}
-        <hr className="my-8 border-t border-muted-foreground" />
+        <hr className="my-8 border-t border-mut ed-foreground" />
 
         {/* Bottom Section: Copyright, Terms, Privacy, and Social Icons */}
         <div
@@ -151,7 +151,7 @@ const Footer = () => {
           </div>
 
           {/* Social Icons */}
-          <div className="flex sm:justify-start gap-4 sm:gap-2 lg:justify-end">
+          <div className="flex sm:justify-start gap-4 sm:gap-2 ">
             <a href="#" target="_blank" rel="noopener noreferrer">
               <FaYoutube className="sm:w-4 sm-h-4 md:h-5 md:w-5 hover:text-primary" />
             </a>

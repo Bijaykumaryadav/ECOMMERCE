@@ -6,7 +6,7 @@ function LayoutPage() {
   return (
     <>
       <Header />
-      <Outlet />
+        <Outlet />
       <Footer />
     </>
   );

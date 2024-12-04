@@ -58,7 +58,7 @@ const Header = () => {
     if (header && body) {
       body.style.paddingTop = `${header.offsetHeight}px`;
     }
-    // Adjust on resi ze
+    // Adjust on resize
     const handleResize = () => {
       if (header) {
         body.style.paddingTop = `${header.offsetHeight}px`;
@@ -74,7 +74,7 @@ const Header = () => {
     <>
       {/* Header Section */}
       <header
-        className={`w-full fixed top-0 left-0 z-50 shadow-md bg-background text-foreground transition-transform duration-300 ${
+        className={`header w-full fixed top-0 left-0 z-50 shadow-md bg-background text-foreground transition-transform duration-300 ${
           scrollingUp ? "translate-y-0" : "-translate-y-full"
         }`}
       >
@@ -167,7 +167,7 @@ const Header = () => {
           </div>
 
           {/* Icons */}
-          <div className="flex items-center space-x-6">
+          <div className="header flex items-center space-x-6">
             {/* Theme Toggle */}
             <button onClick={handleThemeToggle} className="focus:outline-none">
               {theme === "dark" ? (
@@ -201,7 +201,7 @@ const Header = () => {
         </div>
 
         {/* Bottom Navigation for Larger Screens */}
-        <nav className="hidden md:flex items-center justify-center space-x-8 bg-muted py-2">
+        <nav className="header hidden md:flex items-center justify-center space-x-8 bg-muted py-2">
           <Link to="/" className="hover:text-blue-500">
             Home
           </Link>
@@ -218,7 +218,7 @@ const Header = () => {
       </header>
 
       {/* Downward Navbar for Small Screens */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-background text-foreground shadow-md">
+      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-background text-foreground shadow-md header">
         <div className="flex items-center justify-around py-2">
           <Link to="/" className="flex flex-col items-center text-sm">
             <BiHome size={24} />
