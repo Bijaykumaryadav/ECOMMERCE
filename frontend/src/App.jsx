@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import { Toaster } from "@/components/ui/toaster"
 
 const App = () => {
   const theme = useSelector((state) => state.theme.theme);
@@ -22,6 +23,7 @@ const App = () => {
       {/* Toast Notifications */}
       <ToastContainer />
       {/* Routes */}
+      <Toaster />
       <RouterProvider router={router} />
     </div>
   );

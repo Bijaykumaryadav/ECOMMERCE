@@ -1,5 +1,6 @@
 const { imageUploadUtil } = require("../../helpers/cloudinary");
 const { sendResponse } = require("../../utils/sendResponse");
+const Product = require("../../models/Products");
 
 const handleImageUpload = async (req, res) => {
   try {
@@ -91,19 +92,69 @@ const addProducts = async(req,res) => {
 }
 
 //fetch all products 
-const fetchAllProducts = async(req,res) => {
-  try{
+const fetchAllProducts = async (req, res) => {
+  try {
+    // Fetch all products from the database
     const listOfProducts = await Product.find({});
-    return sendResponse(res,200,true,"Successfully fetched Products",{listOfProducts},null);
-  }catch(error){
-    return sendResponse(res,500,false,"Error in fetching Products",null,{error});
+
+    // Check if the list is empty
+    if (!listOfProducts || listOfProducts.length === 0) {
+      return sendResponse(res, 404, false, "No products found", [], null);
+    }
+
+    console.log("product list is:",listOfProducts);
+
+    // Return the list of products
+    return sendResponse(res, 200, true, "Products retrieved successfully", {
+      listOfProducts,
+    });
+  } catch (error) {
+    console.error("Error in fetching products:", error);
+
+    // Return error response
+    return sendResponse(
+      res,
+      500,
+      false,
+      "Error in fetching products",
+      null,
+      { message: error.message } // Avoid exposing full error stack in production
+    );
   }
-}
+};
+
 
 //edit a products
 const editProducts = async(req,res) => {
   try{
-    
+    const {id} = req.params;
+    const {
+      image,
+      title,
+      description,
+      category,
+      brand,
+      price,
+      salePrice,
+      totalStock
+    } = req.body;
+    const findProduct = await Product.findById(id);
+    if(!findProduct){
+      return sendResponse(res,404,false,"Associated Product Id not found",null,null);
+    }
+    findProduct.title = title || findProduct.title
+    findProduct.description = description || findProduct.description
+    findProduct.category = category || findProduct.category
+    findProduct.brand = brand || findProduct.brand
+    findProduct.price = price || findProduct.v
+    findProduct.salePrice = salePrice || findProduct.salePrice
+    findProduct.totalStock = totalStock || findProduct.totalStock
+    findProduct.image = image || findProduct.image
+
+    await findProduct.save();
+
+    return sendResponse(res,200,true,"SuccessFully Updated the products",{findProduct},null);
+
   }catch(error){
     return sendResponse(res,500,false,"Error in editing Products",null,{error});
   }
@@ -112,6 +163,13 @@ const editProducts = async(req,res) => {
 //delete a products
 const deleteProducts = async(req,res) => {
   try{
+    const {id} = req.params
+    const product = await Product.findByIdAndUpdate(id);
+    if(!product) {
+      return sendResponse(res,404,false,"Not founding the associated products",null,null);
+    }
+
+    return sendResponse(res,200,true,"Products deleted Successfully",null,null);
 
   }catch(error){
     return sendResponse(res,500,false,"Error in deleting Products",null,{error});
