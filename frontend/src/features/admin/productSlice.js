@@ -12,12 +12,22 @@ export const addNewProducts = createAsyncThunk(
   "admin/products/addnewproduct",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await Util.call_Post_by_URI("admin/products/add", formData);
+      let response;
+      console.log(formData);
+
+      await Util.call_Post_by_URI(
+        "admin/products/add",
+        formData,
+        (res, status) => {
+          response = res;
+        },
+      );
       toast.success("Product created successfully");
-      return response.data; // Return the response data
+      return response.product;
     } catch (error) {
+      console.log("error is",error);
       toast.error(error.response?.data?.message || "Failed to create product");
-      return rejectWithValue(error.response?.data);
+      return rejectWithValue(error.response.data);
     }
   }
 );

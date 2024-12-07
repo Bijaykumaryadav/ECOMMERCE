@@ -74,7 +74,7 @@ const addProducts = async(req,res) => {
         null
       );
     }
-    const newlyCreatedProduct = new Product({
+    const product = new Product({
       image,
       title,
       description,
@@ -84,9 +84,11 @@ const addProducts = async(req,res) => {
       salePrice,
       totalStock
     })
-    await newlyCreatedProduct.save();
-    return sendResponse(res,201,true,"Successfully added the products",{data},null);
+    await product.save();
+    console.log(product);
+    return sendResponse(res,201,true,"Successfully added the products",{product},null);
   }catch(error){
+    console.log("error is:",error);
     return sendResponse(res,500,false,"Error in adding Products",null,{error});
   }
 }
