@@ -140,7 +140,7 @@ const editProducts = async(req,res) => {
       salePrice,
       totalStock
     } = req.body;
-    const findProduct = await Product.findById(id);
+    let findProduct = await Product.findById(id);
     if(!findProduct){
       return sendResponse(res,404,false,"Associated Product Id not found",null,null);
     }
@@ -148,14 +148,14 @@ const editProducts = async(req,res) => {
     findProduct.description = description || findProduct.description
     findProduct.category = category || findProduct.category
     findProduct.brand = brand || findProduct.brand
-    findProduct.price = price || findProduct.v
-    findProduct.salePrice = salePrice || findProduct.salePrice
+    findProduct.price = price === '' ? 0 : price || findProduct.v
+    findProduct.salePrice = salePrice === '' ? 0 : salePrice || findProduct.salePrice
     findProduct.totalStock = totalStock || findProduct.totalStock
     findProduct.image = image || findProduct.image
 
     await findProduct.save();
 
-    return sendResponse(res,200,true,"SuccessFully Updated the products",{findProduct},null);
+    return sendResponse(res,200,true,"SuccessFully Updated the products",{product: findProduct},null);
 
   }catch(error){
     return sendResponse(res,500,false,"Error in editing Products",null,{error});
@@ -165,15 +165,17 @@ const editProducts = async(req,res) => {
 //delete a products
 const deleteProducts = async(req,res) => {
   try{
-    const {id} = req.params
-    const product = await Product.findByIdAndUpdate(id);
+    const {id} = req.params;
+    console.log("id is:",{id});
+    const product = await Product.findByIdAndDelete(id);
     if(!product) {
       return sendResponse(res,404,false,"Not founding the associated products",null,null);
     }
 
-    return sendResponse(res,200,true,"Products deleted Successfully",null,null);
+    return sendResponse(res,200,true,"Products deleted Successfully",{product},null);
 
   }catch(error){
+    console.log("error is:",error);
     return sendResponse(res,500,false,"Error in deleting Products",null,{error});
   }
 }

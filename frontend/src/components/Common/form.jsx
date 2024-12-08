@@ -4,7 +4,14 @@ import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
 
-function CommonForm({ formControls, formData, setFormData, onSubmit, buttonText }) {
+function CommonForm({ 
+  formControls, 
+  formData, 
+  setFormData, 
+  onSubmit, 
+  buttonText,
+  isBtnDisabled
+ }) {
   function renderInputsByComponentType(getControlItem) {
     const value = formData[getControlItem.name] || ''; // Handle undefined formData safely
 
@@ -89,7 +96,7 @@ function CommonForm({ formControls, formData, setFormData, onSubmit, buttonText 
           </div>
         ))}
       </div>
-      <button type="submit" className="mt-2 w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+      <button disabled={isBtnDisabled} type="submit" className="mt-2 w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
         {buttonText || 'Submit'}
       </button>
     </form>

@@ -59,15 +59,49 @@ export const editProducts = createAsyncThunk(
   "/products/editProducts",
   async ({ id, formData }, { rejectWithValue }) => {
     try {
-      const response = await Util.call_Post_by_URI(`admin/products/edit/${id}`, formData);
+      let response;
+      console.log(formData);
+
+      await Util.call_Post_by_URI(
+        `admin/products/edit/${id}`,
+        formData,
+        (res, status) => {
+          response = res;
+        },
+      );
       toast.success("Product updated successfully");
-      return response.data; // Return the response data
+      return response.product;
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to update product");
+      toast.error(error.response?.product?.message || "Failed to update product");
+      return rejectWithValue(error.response?.product);
+    }
+  }
+);
+
+export const deleteProducts = createAsyncThunk(
+  "/products/deleteProducts",
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      console.log("Received ID for deletion:", id); // Debugging the ID
+      let response;
+
+      // Ensure you're calling the correct Util method for deletion
+      await Util.call_Delete_by_URI(`admin/products/delete/${id}`, (res, status) => {
+        response = res;
+      });
+
+      toast.success("Product deleted successfully");
+      return response.product;
+    } catch (error) {
+      console.error("Error deleting product:", error); // Debugging error
+      toast.error(
+        error.response?.data?.message || "Failed to delete product"
+      );
       return rejectWithValue(error.response?.data);
     }
   }
 );
+
 
 const AdminProductSlice = createSlice({
   name: "adminProducts",
@@ -104,12 +138,26 @@ const AdminProductSlice = createSlice({
       .addCase(editProducts.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(editProducts.fulfilled, (state) => {
+      .addCase(editProducts.fulfilled, (state, action) => {
         state.isLoading = false;
-        toast.success("Product edited successfully"); // Optional toast notification
+        const updatedProduct = action.payload; // Edited product directly from the backend
+        state.productList = state.productList.map((product) =>
+          product._id === updatedProduct._id ? { ...product, ...updatedProduct } : product
+        );
       })
       .addCase(editProducts.rejected, (state) => {
         state.isLoading = false;
+      })
+      .addCase(deleteProducts.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteProducts.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.productList = action?.payload;
+      })
+      .addCase(deleteProducts.rejected, (state) => {
+        state.isLoading = false;
+        toast.error("Failed to delete product");
       });
   },
 });
