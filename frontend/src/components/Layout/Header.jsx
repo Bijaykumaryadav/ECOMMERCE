@@ -11,6 +11,7 @@ import { HiOutlineMenuAlt3, HiOutlineX } from "react-icons/hi";
 import { BiHome, BiCategoryAlt } from "react-icons/bi";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../../features/auth/themeSlice";
+import { shoppingViewHeaderMenuItems } from "@/config";
 
 const Header = () => {
   const theme = useSelector((state) => state.theme.theme);
@@ -111,20 +112,11 @@ const Header = () => {
               {/* Dropdown Menu */}
               {isDropdownOpen && (
                 <div className="absolute top-10 left-0 bg-background text-foreground shadow-md rounded-lg py-2 w-40">
-                  <Link
-                    to="/about"
-                    className="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500"
-                    onClick={() => setIsDropdownOpen(false)}
-                  >
-                    About Us
-                  </Link>
-                  <Link
-                    to="/contact"
-                    className="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500"
-                    onClick={() => setIsDropdownOpen(false)}
-                  >
-                    Contact
-                  </Link>
+                {
+                  shoppingViewHeaderMenuItems.map(menuItems =>  <Link key={menuItems.id} to={menuItems.path}                    className="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500"
+                  onClick={() => setIsDropdownOpen(false)}>{menuItems.label}</Link>
+                  )
+                }
                 </div>
               )}
             </div>
@@ -202,18 +194,10 @@ const Header = () => {
 
         {/* Bottom Navigation for Larger Screens */}
         <nav className="header hidden md:flex items-center justify-center space-x-8 bg-muted py-2">
-          <Link to="/" className="hover:text-blue-500">
-            Home
-          </Link>
-          <Link to="/shop" className="hover:text-blue-500">
-            Shop
-          </Link>
-          <Link to="/about" className="hover:text-blue-500">
-            About Us
-          </Link>
-          <Link to="/contact" className="hover:text-blue-500">
-            Contact
-          </Link>
+          {
+            shoppingViewHeaderMenuItems.map(menuItems =>  <Link key={menuItems.id} to={menuItems.path} className="hover:text-blue-500">{menuItems.label}</Link>
+            )
+          }
         </nav>
       </header>
 
@@ -224,7 +208,7 @@ const Header = () => {
             <BiHome size={24} />
             <span>Home</span>
           </Link>
-          <Link to="/shop" className="flex flex-col items-center text-sm">
+          <Link to="/shop/listing" className="flex flex-col items-center text-sm">
             <BiCategoryAlt size={24} />
             <span>Shop</span>
           </Link>
