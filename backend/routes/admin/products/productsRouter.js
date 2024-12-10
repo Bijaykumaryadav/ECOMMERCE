@@ -13,7 +13,7 @@ const router = express.Router();
 router.post('/upload-image',upload.single('my_file'),handleImageUpload);
 router.post("/add",addProducts);
 router.post("/edit/:id",editProducts);
-router.delete("/delete/:id", deleteProducts); // Delete a product (use DELETE instead of POST/GET)
+router.delete("/delete/:id", deleteProducts); 
 router.get("/get",fetchAllProducts);
 
 module.exports = router;
