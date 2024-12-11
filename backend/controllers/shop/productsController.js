@@ -3,9 +3,9 @@ const Product = require("../../models/Products");
 
 const getFilteredProducts = async(req,res) => {
     try{
-        const products = await Product.find({})
+        const data = await Product.find({})
 
-        return sendResponse(res,200,true,"Successfully fetched products",{data:products},null);
+        return sendResponse(res,200,true,"Successfully fetched products",{data},null);
     }catch(error){
     return sendResponse(
       res,

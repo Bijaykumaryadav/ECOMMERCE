@@ -55,7 +55,7 @@ function AdminProducts() {
           addNewProducts({
             ...formData,
             image: uploadedImageUrl,
-          })
+          }).unwrap()
         ).then((data) => {
           if (data?.payload?.success) {
             dispatch(fetchAllProducts());

@@ -128,7 +128,7 @@ const AdminProductSlice = createSlice({
       })
       .addCase(addNewProducts.fulfilled, (state, action) => {
         state.isLoading = false;
-        toast.success("New product added successfully"); // Optional toast notification
+        productList = action.payload;
       })
       .addCase(addNewProducts.rejected, (state) => {
         state.isLoading = false;

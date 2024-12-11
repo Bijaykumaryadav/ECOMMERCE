@@ -8,7 +8,6 @@ import CheckAuth from "@/components/Common/CheckAuth";
 import AdminLayout from "@/components/AdminView/AdminLayout";
 import UnauthPage from "@/pages/Layout/UnauthPage";
 import {ResetPassword,ForgotPassword,GoogleCallback} from "../pages/Auth/index"
-import { useDispatch, useSelector } from "react-redux";
 
 
 export const router = createBrowserRouter([

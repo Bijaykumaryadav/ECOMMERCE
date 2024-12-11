@@ -5,7 +5,7 @@ const shopRoute = require("./shop/index");
 const router = express.Router();
 
 router.use("/users",authRoute);
-router.use("/shop",)
+router.use("/shop",shopRoute);
 router.use("/admin",adminRoute);
 
 module.exports = router;
