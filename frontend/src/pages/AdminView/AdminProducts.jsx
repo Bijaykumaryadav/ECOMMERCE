@@ -55,9 +55,11 @@ function AdminProducts() {
           addNewProducts({
             ...formData,
             image: uploadedImageUrl,
-          }).unwrap()
-        ).then((data) => {
-          if (data?.payload?.success) {
+          })
+        ).unwrap()
+        .then((data) => {
+          console.log("data",data);
+          if (data) {
             dispatch(fetchAllProducts());
             setOpenCreateProductsDialog(false);
             setImageFile(null);

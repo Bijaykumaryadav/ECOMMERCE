@@ -123,14 +123,17 @@ const AdminProductSlice = createSlice({
       })
 
       // Handle addNewProducts
-      .addCase(addNewProducts.pending, (state) => {
+      .addCase(addNewProducts.pending, (state,action) => {
         state.isLoading = true;
+        console.log(action.payload);
       })
       .addCase(addNewProducts.fulfilled, (state, action) => {
+        console.log(action.payload);
         state.isLoading = false;
-        productList = action.payload;
+        state.productList.push(action.payload);
       })
-      .addCase(addNewProducts.rejected, (state) => {
+      .addCase(addNewProducts.rejected, (state,action) => {
+        console.log(action.payload);
         state.isLoading = false;
       })
 
@@ -153,7 +156,6 @@ const AdminProductSlice = createSlice({
       })
       .addCase(deleteProducts.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.productList = action?.payload;
       })
       .addCase(deleteProducts.rejected, (state) => {
         state.isLoading = false;
