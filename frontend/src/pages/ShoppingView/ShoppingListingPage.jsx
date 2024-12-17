@@ -9,11 +9,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { sortOptions } from '@/config'
-import { fetchAllFilteredProducts } from '@/features/shop/productSlice'
-import { ArrowUpDownIcon } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { createSearchParams, useSearchParams } from 'react-router-dom'
+import { fetchAllFilteredProducts,fetchProductDetails } from '@/features/shop/productSlice';
+import { ArrowUpDownIcon } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { createSearchParams, useSearchParams,useNavigate } from 'react-router-dom';
 
 function createSearchParamsHelper(filterParams){
   const queryParams = [];
@@ -30,10 +30,11 @@ function createSearchParamsHelper(filterParams){
 function ShoppingListingPage() {
 
   const dispatch = useDispatch();
-  const {productList} = useSelector(state => state.shopProducts);
+  const {productList,productDetails} = useSelector(state => state.shopProducts);
   const [filters,setFilters] = useState({});
   const [sort,setSort] = useState(null);
   const [searchParams,setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   // console.log({productList});
 
   function handleSort(value){
@@ -62,6 +63,7 @@ function ShoppingListingPage() {
       sessionStorage.setItem('filters',JSON.stringify(cpyFilters));
   }
 
+
   useEffect(()=>{
     setSort("price-lowtohigh");
     setFilters(JSON.parse(sessionStorage.getItem("filters")) || {} );
@@ -76,13 +78,14 @@ function ShoppingListingPage() {
     }
   },[filters]);
   
-  console.log(filters,searchParams,"filters");
+  // console.log(filters,searchParams,"filters");
 
   useEffect (() => {
-    dispatch(fetchAllFilteredProducts()).unwrap();
-  },[dispatch]);
+    if(filters !== null && sort!== null)
+    dispatch(fetchAllFilteredProducts({filterParams: filters,sortParams:sort})).unwrap();
+  },[dispatch,sort,filters]);
 
-  // console.log(productList);
+console.log({productDetails},"products");
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
@@ -116,7 +119,7 @@ function ShoppingListingPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
           {
             productList && productList.length > 0 ? 
-            productList.map(productItem => <ShoppingProductTile product = {productItem}/>) :
+            productList.map(productItem => <ShoppingProductTile product = {productItem}  />) :
             null
           }
         </div>

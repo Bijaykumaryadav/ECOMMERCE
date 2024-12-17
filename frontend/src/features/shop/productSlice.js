@@ -4,13 +4,17 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // Async thunk to fetch all products
 export const fetchAllFilteredProducts = createAsyncThunk(
   "product/fetchAllFilteredProducts",
-  async (_, { rejectWithValue }) => {
+  async ({filterParams,sortParams}, { rejectWithValue }) => {
+    const query = new URLSearchParams({
+      ...filterParams,
+      sortBy: sortParams
+    })
     try {
       let response;
       await Util.call_get_with_uri_param(
-        "shop/products/get",
+        `shop/products/get?${query}`,
         (res, status) => {
-          console.log(res);
+          // console.log(res);
           response = res;
         }
       );
@@ -21,9 +25,29 @@ export const fetchAllFilteredProducts = createAsyncThunk(
   }
 );
 
+export const fetchProductDetails = createAsyncThunk(
+  "product/fetchProductDetails",
+  async (id, { rejectWithValue }) => {
+    try {
+      let response;
+      await Util.call_get_with_uri_param(
+        `shop/products/get/${id}`,
+        (res, status) => {
+          console.log(res);
+          response = res;
+        }
+      );
+      return response?.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
     isLoading: false,
-    productList: []
+    productList: [],
+    productDetails: null,
 }
 
 const shoppingProductSlice = createSlice({
@@ -43,6 +67,18 @@ const shoppingProductSlice = createSlice({
         console.log(action.payload);
         state.isLoading = false,
         state.productList = []
+      })
+      .addCase(fetchProductDetails.pending,(state,action)=> {
+        state.isLoading = true,
+        console.log(action.payload);
+      }).addCase(fetchProductDetails.fulfilled,(state,action)=> {
+        console.log(action.payload);
+        state.isLoading = false,
+        state.productDetails = action.payload
+      }).addCase(fetchProductDetails.rejected,(state,action)=> {
+        console.log(action.payload);
+        state.isLoading = false,
+        state.productDetails = null
       })
     }
 })
