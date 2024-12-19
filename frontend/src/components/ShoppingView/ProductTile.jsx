@@ -16,26 +16,26 @@ function ShoppingProductTile({ product }) {
     ?.replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric characters with '-'
     ?.replace(/^-+|-+$/g, ''); // Remove leading or trailing '-'
 
-  // Function to fetch product details
-  const handleGetProductDetails = () => {
-    if (!product?._id) return;
+  // // Function to fetch product details
+  // const handleGetProductDetails = () => {
+  //   if (!product?._id) return;
 
-    dispatch(fetchProductDetails(product._id))
-      .unwrap()
-      .then((data) => {
-        console.log('Fetched product details:', data);
-      })
-      .catch((error) => {
-        console.error('Error fetching product details:', error);
-      });
-  };
+  //   dispatch(fetchProductDetails(product._id))
+  //     .unwrap()
+  //     .then((data) => {
+  //       console.log('Fetched product details:', data);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching product details:', error);
+  //     });
+  // };
 
   return (
     <Card className="w-full max-w-sm mx-auto">
       {/* Link to the product details page */}
       <Link
         to={`/shop/${productNameSlug}/${product?._id}`}
-        onClick={handleGetProductDetails}
+        // onClick={handleGetProductDetails}
       >
         <div className="relative">
           {/* Product Image */}
