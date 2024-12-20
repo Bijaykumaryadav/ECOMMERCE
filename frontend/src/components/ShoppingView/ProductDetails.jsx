@@ -82,9 +82,6 @@ const ProductDetailsPage = () => {
   // Generate product images array
   const productImages = [
     productDetails.image,
-    '/api/placeholder/600/800',
-    '/api/placeholder/600/800',
-    '/api/placeholder/600/800'
   ].filter(Boolean); // Filter out any undefined/null values
 
   // Default sizes
