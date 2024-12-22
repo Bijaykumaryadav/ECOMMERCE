@@ -178,7 +178,7 @@ const Header = () => {
             </Link>
 
             {/* Cart */}
-            <Link to="/cart" className="relative hidden md:inline-block">
+            <Link to="/shop/cart" className="relative hidden md:inline-block">
               <AiOutlineShoppingCart size={24} className="text-foreground" />
               <span className="absolute top-0 right-0 bg-green-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
                 3

@@ -9,6 +9,7 @@ import CheckAuth from "@/components/Common/CheckAuth";
 import AdminLayout from "@/components/AdminView/AdminLayout";
 import UnauthPage from "@/pages/Layout/UnauthPage";
 import { ResetPassword, ForgotPassword, GoogleCallback } from "../pages/Auth/index";
+import Cart from "@/components/Cart/Cart";
 
 export const router = createBrowserRouter([
   {
@@ -63,6 +64,10 @@ export const router = createBrowserRouter([
             element: <ShoppingHomePage />
           },
           {
+            path: "cart",
+            element: <Cart/>
+          },
+          {
             path: "listing",
             element: <ShoppingListingPage />
           },
@@ -74,9 +79,8 @@ export const router = createBrowserRouter([
             path: "account",
             element: <ShoppingAccount />
           },
-          // Add the new ProductDetailsPage route
           {
-            path: ":slug/:id", // Route for viewing a product's details
+            path: ":slug/:id", 
             element: <ProductDetailsPage />
           }
         ]

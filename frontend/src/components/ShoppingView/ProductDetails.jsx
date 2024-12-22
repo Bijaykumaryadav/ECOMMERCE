@@ -85,7 +85,7 @@ const ProductDetailsPage = () => {
   ].filter(Boolean); // Filter out any undefined/null values
 
   // Default sizes
-  const sizes = ['XS', 'S', 'M', 'L', 'XL'];
+  const sizes = ['XS', 'SM', 'MD', 'L', 'XL','2XL'];
 
   // Handle quantity changes
   const handleQuantityDecrease = () => {
