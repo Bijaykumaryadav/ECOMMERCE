@@ -8,10 +8,12 @@ const initialState = {
 }
 
 export const addToCart = createAsyncThunk('/cart/addToCart',  async ({userId,productId,quantity}, { rejectWithValue }) => {
+  console.log(userId,productId,quantity,"since the add to cart is");
     try {
       let response;
       await Util.call_Post_by_URI(
         'shop/cart/add',
+        {userId,productId,quantity},
         (res, status) => {
           console.log(res);
           response = res;

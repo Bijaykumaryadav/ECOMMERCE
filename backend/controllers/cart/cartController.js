@@ -49,10 +49,11 @@ const addToCart = async(req,res) => {
         200,
         true,
         "Product added to cart successfully",
-        {cart},
+        {data:cart},
         null
       );
     }catch(error){
+      console.log(error);
     return sendResponse(
       res,
       500,
@@ -80,7 +81,7 @@ const fetchCartItems = async(req,res) => {
       }
 
       const cart = await Cart.findOne({userId}).populate({
-        path: 'item.productId',
+        path: 'items.productId',
         select: 'image title price salePrice'
       })
 

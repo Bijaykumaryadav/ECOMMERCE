@@ -216,7 +216,7 @@ const Header = () => {
             <AiOutlineHeart size={24} />
             <span>Wishlist</span>
           </Link>
-          <Link to="/cart" className="flex flex-col items-center text-sm">
+          <Link to="/shop/cart" className="flex flex-col items-center text-sm">
             <AiOutlineShoppingCart size={24} />
             <span>Cart</span>
           </Link>

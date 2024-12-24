@@ -24,4 +24,4 @@ const CartSchema = new mongoose.Schema({
     timestamps: true
 });
 
-mongoose.exports = mongoose.model("Cart",CartSchema);
+module.exports = mongoose.model("Cart",CartSchema);

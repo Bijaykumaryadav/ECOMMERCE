@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { fetchProductDetails } from '@/features/shop/productSlice';
 import { useDispatch } from 'react-redux';
 
-function ShoppingProductTile({ product }) {
+function ShoppingProductTile({ product , handleAddtoCart }) {
   const dispatch = useDispatch();
 
   // Generate the productNameSlug from the product title
@@ -78,12 +78,11 @@ function ShoppingProductTile({ product }) {
             )}
           </div>
         </CardContent>
-
+      </Link>
         {/* Add to Cart Button */}
         <CardFooter>
-          <Button className="w-full">Add to cart</Button>
+          <Button className="w-full" onClick={() => handleAddtoCart(product?._id)}>Add to cart</Button>
         </CardFooter>
-      </Link>
     </Card>
   );
 }

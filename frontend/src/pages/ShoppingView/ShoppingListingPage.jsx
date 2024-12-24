@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { sortOptions } from '@/config'
+import { addToCart, fetchCartItems } from '@/features/shop/cartSlice'
 import { fetchAllFilteredProducts,fetchProductDetails } from '@/features/shop/productSlice';
 import { ArrowUpDownIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -29,6 +30,7 @@ function createSearchParamsHelper(filterParams){
 
 function ShoppingListingPage() {
 
+  const {user} = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const {productList,productDetails} = useSelector(state => state.shopProducts);
   const [filters,setFilters] = useState({});
@@ -63,6 +65,19 @@ function ShoppingListingPage() {
       sessionStorage.setItem('filters',JSON.stringify(cpyFilters));
   }
 
+function handleAddtoCart(getCurrentProductId) {
+  dispatch(addToCart({
+    userId: user?._id,
+    productId: getCurrentProductId,
+    quantity: 1
+  }))
+  .unwrap()
+  .then(data => {
+    if(data) {
+      dispatch(fetchCartItems(user?._id));
+    }
+  })
+}
 
   useEffect(()=>{
     setSort("price-lowtohigh");
@@ -119,7 +134,10 @@ console.log({productDetails},"products");
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
           {
             productList && productList.length > 0 ? 
-            productList.map(productItem => <ShoppingProductTile product = {productItem}  />) :
+            productList.map(productItem => <ShoppingProductTile 
+              product = {productItem}
+              handleAddtoCart={handleAddtoCart}
+                />) :
             null
           }
         </div>
