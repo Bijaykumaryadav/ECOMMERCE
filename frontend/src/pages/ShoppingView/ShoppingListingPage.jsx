@@ -11,10 +11,12 @@ import {
 import { sortOptions } from '@/config'
 import { addToCart, fetchCartItems } from '@/features/shop/cartSlice'
 import { fetchAllFilteredProducts,fetchProductDetails } from '@/features/shop/productSlice';
+import { useToast } from '@/hooks/use-toast'
 import { ArrowUpDownIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSearchParams, useSearchParams,useNavigate } from 'react-router-dom';
+
 
 function createSearchParamsHelper(filterParams){
   const queryParams = [];
@@ -36,6 +38,7 @@ function ShoppingListingPage() {
   const [filters,setFilters] = useState({});
   const [sort,setSort] = useState(null);
   const [searchParams,setSearchParams] = useSearchParams();
+  const {toast} = useToast();
   const navigate = useNavigate();
   // console.log({productList});
 
@@ -75,6 +78,9 @@ function handleAddtoCart(getCurrentProductId) {
   .then(data => {
     if(data) {
       dispatch(fetchCartItems(user?._id));
+      toast({
+        title: "Product is added to cart"
+      })
     }
   })
 }
