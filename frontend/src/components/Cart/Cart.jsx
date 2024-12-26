@@ -12,32 +12,20 @@ export default function Cart() {
   const {cartItems} = useSelector((state) => state.shopCart);
   const {user} = useSelector(state => state.auth);
   const dispatch = useDispatch();
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      name: "Premium Wireless Headphones",
-      price: 299.99,
-      quantity: 1,
-      image: "/api/placeholder/80/80",
-      color: "Space Gray",
-      sku: "WH-001"
-    },
-    {
-      id: 2,
-      name: "Smart Fitness Watch",
-      price: 199.99,
-      quantity: 1,
-      image: "/api/placeholder/80/80",
-      color: "Black",
-      sku: "SW-002"
-    }
-  ]);
+
+  // Calculate subtotal
+  const subtotal = cartItems && cartItems.items && cartItems.items.length > 0 
+    ? cartItems.items.reduce((sum, currentItem) => sum + (
+      currentItem?.salePrice > 0 ? currentItem.salePrice : currentItem?.price
+    ) * currentItem?.quantity, 0)
+    : 0;
+
+  const shipping = 9.99;
+  const tax = subtotal * 0.08; // 8% tax
 
   useEffect(() => {
     dispatch(fetchCartItems(user?._id))
-  },[dispatch,user?._id]);
-
-  console.log(cartItems,"cartItems");
+  }, [dispatch, user?._id]);
 
   const [coupon, setCoupon] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
@@ -49,25 +37,18 @@ export default function Cart() {
     "FREESHIP": { discount: 9.99, type: "shipping" }
   };
 
-  const updateQuantity = (id, change) => {
-    setItems(prevItems =>
-      prevItems.map(item =>
-        item.id === id ? { ...item, quantity: Math.max(1, item.quantity + change) } : item
-      )
-    );
-  };
+  // Calculate discount based on applied coupon
+  let discount = 0;
+  if (appliedCoupon) {
+    if (appliedCoupon.type === "percentage") {
+      discount = subtotal * appliedCoupon.discount;
+    } else if (appliedCoupon.type === "shipping") {
+      discount = appliedCoupon.discount;
+    }
+  }
 
-  const removeItem = (id) => {
-    const itemToRemove = items.find(item => item.id === id);
-    setItems(prevItems => prevItems.filter(item => item.id !== id));
-    setSavedForLater(prev => [...prev, itemToRemove]);
-  };
-
-  const moveToCart = (id) => {
-    const itemToMove = savedForLater.find(item => item.id === id);
-    setSavedForLater(prev => prev.filter(item => item.id !== id));
-    setItems(prev => [...prev, itemToMove]);
-  };
+  // Calculate total including all components
+  const totalCartAmount = subtotal + shipping + tax - discount;
 
   const applyCoupon = () => {
     if (validCoupons[coupon]) {
@@ -86,25 +67,8 @@ export default function Cart() {
     setCoupon("");
   };
 
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shipping = 9.99;
-  const tax = subtotal * 0.08;
-  
-  let discount = 0;
-  if (appliedCoupon) {
-    if (appliedCoupon.type === "percentage") {
-      discount = subtotal * appliedCoupon.discount;
-    } else if (appliedCoupon.type === "shipping") {
-      discount = appliedCoupon.discount;
-    }
-  }
-  
-  const total = subtotal + shipping + tax - discount;
-
-  // [Rest of the JSX remains the same...]
   return (
     <div className="min-h-screen bg-background text-foreground p-8">
-      {/* [Previous JSX code remains exactly the same...] */}
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main Cart Section */}
@@ -117,7 +81,7 @@ export default function Cart() {
                     <h1 className="text-2xl font-semibold">Shopping Cart</h1>
                   </div>
                   <span className="text-muted-foreground">
-                    {items.reduce((sum, item) => sum + item.quantity, 0)} items
+                    {cartItems?.items?.length || 0} items
                   </span>
                 </div>
               </div>
@@ -131,6 +95,7 @@ export default function Cart() {
                   <p className="text-muted-foreground">Your cart is empty.</p>
                 )}
               </div>
+
               {/* Coupon Section */}
               <div className="p-6 border-t border-border">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
@@ -180,38 +145,6 @@ export default function Cart() {
                 </div>
               </div>
             </Card>
-
-            {/* Saved for Later */}
-            {savedForLater.length > 0 && (
-              <Card className="mt-6 border-border">
-                <div className="p-6">
-                  <h2 className="text-lg font-semibold">Saved for Later</h2>
-                  <div className="mt-4 space-y-4">
-                    {savedForLater.map((item) => (
-                      <div key={item.id} className="flex items-center space-x-4 p-4 bg-muted/50 rounded-lg">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="h-16 w-16 rounded-md object-cover border border-border"
-                        />
-                        <div className="flex-1">
-                          <h3 className="font-medium">{item.name}</h3>
-                          <p className="text-sm text-muted-foreground">${item.price.toFixed(2)}</p>
-                        </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => moveToCart(item.id)}
-                          className="bg-background"
-                        >
-                          Move to Cart
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </Card>
-            )}
           </div>
 
           {/* Order Summary */}
@@ -221,7 +154,7 @@ export default function Cart() {
                 <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>Subtotal ({items.length} items)</span>
+                    <span>Subtotal ({cartItems?.items?.length || 0} items)</span>
                     <span>${subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm text-muted-foreground">
@@ -241,7 +174,7 @@ export default function Cart() {
                   <div className="h-px bg-border my-4" />
                   <div className="flex justify-between text-lg font-semibold">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>${totalCartAmount.toFixed(2)}</span>
                   </div>
                 </div>
 

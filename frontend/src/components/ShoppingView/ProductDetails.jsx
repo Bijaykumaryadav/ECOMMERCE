@@ -19,6 +19,8 @@ import { Star, ShoppingCart, Heart } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProductDetails } from '@/features/shop/productSlice';
 import { useParams } from 'react-router-dom';
+import { addToCart, fetchCartItems } from '@/features/shop/cartSlice';
+import { useToast } from '@/hooks/use-toast';
 
 const ProductDetailsPage = () => {
   // State management
@@ -27,14 +29,32 @@ const ProductDetailsPage = () => {
   const [mainImage, setMainImage] = useState('');
   const [isDataFetched, setIsDataFetched] = useState(false);
   const [error, setError] = useState(null);
-  
+  const {user} = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const { id } = useParams();
+  const {toast} = useToast();
   
   // Only select data after it's been fetched
   const productDetails = useSelector((state) => 
     isDataFetched ? state.shopProducts.productDetails : null
   );
+
+  function handleAddToCart(getCurrentProductId) {
+  dispatch(addToCart({
+    userId: user?._id,
+    productId: getCurrentProductId,
+    quantity: 1
+  }))
+  .unwrap()
+  .then(data => {
+    if(data) {
+      dispatch(fetchCartItems(user?._id));
+      toast({
+        title: "Product is added to cart"
+      })
+    }
+  })
+}
 
   // Fetch product data
   useEffect(() => {
@@ -216,7 +236,7 @@ const ProductDetailsPage = () => {
                 <Button 
                   size="lg" 
                   className="w-full"
-                  disabled={!selectedSize || productDetails.totalStock === 0}
+                  disabled={ productDetails.totalStock === 0} onClick={()=> handleAddToCart(id)}
                 >
                   <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
                 </Button>

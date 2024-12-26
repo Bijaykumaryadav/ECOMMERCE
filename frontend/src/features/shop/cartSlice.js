@@ -64,8 +64,9 @@ export const deleteCartItem = createAsyncThunk('/cart/deleteCartItem',  async ({
 export const updateCartQuantity = createAsyncThunk('/cart/updateCartQuantity',  async ({userId,productId,quantity}, { rejectWithValue }) => {
     try {
       let response;
-      await Util.call_Delete_by_URI(
+      await Util.call_Put_by_URI(
         `shop/cart/update-cart`,
+        {userId,productId,quantity},
         (res, status) => {
           console.log(res);
           response = res;
