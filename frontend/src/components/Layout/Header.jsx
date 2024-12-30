@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import {
   AiOutlineHeart,
   AiOutlineSearch,
@@ -12,6 +12,7 @@ import { BiHome, BiCategoryAlt } from "react-icons/bi";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../../features/auth/themeSlice";
 import { shoppingViewHeaderMenuItems } from "@/config";
+import { Label } from "../ui/label";
 
 const Header = () => {
   const theme = useSelector((state) => state.theme.theme);
@@ -32,6 +33,34 @@ const Header = () => {
   const handleThemeToggle = () => {
     dispatch(toggleTheme());
   };
+
+  const navigate = useNavigate();
+    const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+function handleNavigate(getCurrentMenuItem) {
+  // Clear filters
+  sessionStorage.removeItem("filters");
+
+  // Set new filters only if not navigating to "home" or "shop"
+  const currentFilter =
+    getCurrentMenuItem.id !== "home" && getCurrentMenuItem.id !== "shop"
+      ? { category: [getCurrentMenuItem.id] }
+      : null;
+
+  if (currentFilter) {
+    sessionStorage.setItem("filters", JSON.stringify(currentFilter));
+  }
+
+  // If already on the listing page, update query parameters
+  if (location.pathname.includes("listing") && currentFilter !== null) {
+    setSearchParams(new URLSearchParams(`?category=${getCurrentMenuItem.id}`));
+  } else {
+    // Navigate to the correct route
+    navigate(getCurrentMenuItem.path);
+  }
+}
+
 
   const handleScroll = () => {
     const currentScrollY = window.scrollY;
@@ -195,7 +224,9 @@ const Header = () => {
         {/* Bottom Navigation for Larger Screens */}
         <nav className="header hidden md:flex items-center justify-center space-x-8 bg-muted py-2">
           {
-            shoppingViewHeaderMenuItems.map(menuItems =>  <Link key={menuItems.id} to={menuItems.path} className="hover:text-blue-500">{menuItems.label}</Link>
+            shoppingViewHeaderMenuItems.map(menuItems =>  <Label
+                key={menuItems.id}
+               onClick={() => handleNavigate(menuItems)} className="hover:text-blue-500 cursor-pointer">{menuItems.label}</Label>
             )
           }
         </nav>

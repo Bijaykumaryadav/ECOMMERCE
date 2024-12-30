@@ -64,6 +64,7 @@ function ShoppingListingPage() {
           cpyFilters[getSectionId].splice(indexOfCurrentOption,1);
         }
       }
+      console.log("fileters is",cpyFilters);
       setFilters(cpyFilters);
       sessionStorage.setItem('filters',JSON.stringify(cpyFilters));
   }

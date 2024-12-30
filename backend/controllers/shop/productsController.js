@@ -71,6 +71,7 @@ const getProductDetails = async(req,res) => {
       null
     );
   }catch(error){
+    console.log("error is",error);
     return sendResponse(
       res,
       500,

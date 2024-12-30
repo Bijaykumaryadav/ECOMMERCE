@@ -29,7 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { addToCart, fetchCartItems } from "@/features/shop/cartSlice";
 import { useToast } from '@/hooks/use-toast'
 import ProductDetailsDialog from "@/components/ShoppingView/ProductDetails";
-import { getFeatureImages } from "@/store/common-slice";
+import { getFeatureImages } from "@/features/common/commonSlice";
 
 const categoriesWithIcon = [
   { id: "men", label: "Men", icon: ShirtIcon },
@@ -73,7 +73,7 @@ function HomePage() {
   }
 
   function handleGetProductDetails(getCurrentProductId) {
-    dispatch(fetchProductDetails(getCurrentProductId));
+    dispatch(fetchProductDetails(getCurrentProductId)).unwrap();
   }
 
   function handleAddtoCart(getCurrentProductId) {
@@ -83,7 +83,8 @@ function HomePage() {
         productId: getCurrentProductId,
         quantity: 1,
       })
-    ).then((data) => {
+    ).unwrap()
+    .then((data) => {
       if (data) {
         dispatch(fetchCartItems(user?.id));
         toast({
