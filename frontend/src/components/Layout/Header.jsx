@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../../features/auth/themeSlice";
 import { shoppingViewHeaderMenuItems } from "@/config";
 import { Label } from "../ui/label";
+import { fetchAllFilteredProducts } from "@/features/shop/productSlice";
 
 const Header = () => {
   const theme = useSelector((state) => state.theme.theme);
@@ -38,27 +39,37 @@ const Header = () => {
     const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
-function handleNavigate(getCurrentMenuItem) {
-  // Clear filters
-  sessionStorage.removeItem("filters");
+  useEffect(() => {
+  const storedFilters = sessionStorage.getItem("filters")
+    ? JSON.parse(sessionStorage.getItem("filters"))
+    : {};
+  
+  const filterParams = {
+    ...storedFilters,
+  };
+  
+  dispatch(fetchAllFilteredProducts({ filterParams, sortParams: "" }));
+}, [location.search]); // Re-run whenever query params change
 
-  // Set new filters only if not navigating to "home" or "shop"
-  const currentFilter =
-    getCurrentMenuItem.id !== "home" && getCurrentMenuItem.id !== "shop"
-      ? { category: [getCurrentMenuItem.id] }
-      : null;
 
-  if (currentFilter) {
-    sessionStorage.setItem("filters", JSON.stringify(currentFilter));
+function handleNavigate(menuItem) {
+  // Clear filters for "home" or "shop"
+  if (menuItem.id === "home" || menuItem.id === "shop") {
+    sessionStorage.removeItem("filters"); // Clear session storage filter
+    setSearchParams({}); // Clear search params
+    navigate(menuItem.path); // Navigate to home or shop
+    return;
   }
 
-  // If already on the listing page, update query parameters
-  if (location.pathname.includes("listing") && currentFilter !== null) {
-    setSearchParams(new URLSearchParams(`?category=${getCurrentMenuItem.id}`));
-  } else {
-    // Navigate to the correct route
-    navigate(getCurrentMenuItem.path);
-  }
+  // For categories, apply filter
+  const currentFilter = { category: [menuItem.id] };
+  sessionStorage.setItem("filters", JSON.stringify(currentFilter)); // Save filter to session storage
+
+  // Update the URL search params to reflect the filter
+  setSearchParams({ category: menuItem.id });
+
+  // Navigate to the category-specific page
+  navigate(`/shop/listing?category=${menuItem.id}`);
 }
 
 
