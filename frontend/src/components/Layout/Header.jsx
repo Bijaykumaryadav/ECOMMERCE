@@ -14,14 +14,20 @@ import { toggleTheme } from "../../features/auth/themeSlice";
 import { shoppingViewHeaderMenuItems } from "@/config";
 import { Label } from "../ui/label";
 import { fetchAllFilteredProducts } from "@/features/shop/productSlice";
+import UserMenuSheet from './AccountDialog'; 
+
 
 const Header = () => {
+  const [openDialog, setOpenDialog] = useState(false);
   const theme = useSelector((state) => state.theme.theme);
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [scrollingUp, setScrollingUp] = useState(true); // Set to true initially
+  const [scrollingUp, setScrollingUp] = useState(true); 
   const [lastScrollY, setLastScrollY] = useState(0);
+  const user  = useSelector((state) => state.auth);
+
+  // console.log(user,{user},"user is");
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -55,15 +61,14 @@ const Header = () => {
 function handleNavigate(menuItem) {
   // Clear filters for "home" or "shop"
   if (menuItem.id === "home" || menuItem.id === "shop") {
-    sessionStorage.removeItem("filters"); // Clear session storage filter
-    setSearchParams({}); // Clear search params
-    navigate(menuItem.path); // Navigate to home or shop
+    sessionStorage.removeItem("filters"); 
+    setSearchParams({}); 
+    navigate(menuItem.path); 
     return;
   }
 
-  // For categories, apply filter
   const currentFilter = { category: [menuItem.id] };
-  sessionStorage.setItem("filters", JSON.stringify(currentFilter)); // Save filter to session storage
+  sessionStorage.setItem("filters", JSON.stringify(currentFilter)); 
 
   // Update the URL search params to reflect the filter
   setSearchParams({ category: menuItem.id });
@@ -224,11 +229,22 @@ function handleNavigate(menuItem) {
                 3
               </span>
             </Link>
-
             {/* User Profile */}
-            <Link to="/profile" className="hidden md:inline-block">
-              <CgProfile size={24} className="text-foreground" />
-            </Link>
+              <div className="h-6 w-6 hidden md:inline-block" onClick={(e) => {
+                e.preventDefault();
+                setOpenDialog(true);
+              }}>
+                {user?.user?.profileImage ? (
+                  <img
+                    src={user?.user?.profileImage}
+                    alt={user.name || "User Profile"}
+                    className="rounded-full cursor-pointer"
+                  />
+                ) : (
+                  <CgProfile size={24} className="text-foreground" />
+                )}
+              </div>
+              <UserMenuSheet open={openDialog} onOpenChange={setOpenDialog} />
           </div>
         </div>
 
