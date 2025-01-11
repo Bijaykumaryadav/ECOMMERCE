@@ -4,6 +4,7 @@ import authReducer from "../features/auth/authSlice";
 import adminProductSlice from "../features/admin/productSlice";
 import shopProductSlice from "../features/shop/productSlice";
 import shopCartSlice from "../features/shop/cartSlice";
+import shopAddressSlice from "../features/shop/addressSlice";
 import commonFeatureSlice from "../features/common/commonSlice";
 
 const store = configureStore({
@@ -13,6 +14,7 @@ const store = configureStore({
     adminProducts: adminProductSlice,
     shopProducts: shopProductSlice,
     shopCart: shopCartSlice,
+    shopAddress : shopAddressSlice,
     commonFeature: commonFeatureSlice,
   },
 });

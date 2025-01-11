@@ -31,7 +31,7 @@ module.exports.signUp = async (req, res) => {
     let user = await User.findOne({ email });
     if (user) {
       if (!user.isVerified) {
-        const otp = await generateOTP(user._id); // OTP for existing user
+        const otp = await generateOTP(user._id); 
         user.otp = otp;
         await user.save();
         await verifyUserEmail(user, otp);
