@@ -1,3 +1,4 @@
+import Util from "@/helpers/Util";
 import {createSlice,createAsyncThunk} from "@reduxjs/toolkit";
 
 const initialState = {
@@ -19,6 +20,7 @@ export const addNewAddress = createAsyncThunk('/addresses/addNewAddress',  async
       );
       return response?.data;
     } catch (error) {
+      console.log("error is",error);
       return rejectWithValue(error.response.data);
     }
   })
@@ -35,6 +37,7 @@ export const addNewAddress = createAsyncThunk('/addresses/addNewAddress',  async
       );
       return response?.data;
     } catch (error) {
+      console.log("error is",error);
       return rejectWithValue(error.response.data);
     }
   }
@@ -85,10 +88,8 @@ const addressSlice = createSlice({
                 state.isLoading = true;
             }).addCase(addNewAddress.fulfilled,(state,action) => {
                 state.isLoading = false;
-                state.addressList = action.payload;
             }).addCase(addNewAddress.rejected,(state) => {
                 state.isLoading = false;
-                state.addressList = []
             })            
             .addCase(fetchAllAddresses.pending,(state) => {
                 state.isLoading = true;

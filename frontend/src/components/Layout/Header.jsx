@@ -27,7 +27,7 @@ const Header = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const user  = useSelector((state) => state.auth);
 
-  // console.log(user,{user},"user is");
+  // console.log(user?.user?.profileImage,"user is");
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);

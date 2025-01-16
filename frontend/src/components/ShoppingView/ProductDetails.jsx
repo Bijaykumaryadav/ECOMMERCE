@@ -23,7 +23,6 @@ import { addToCart, fetchCartItems } from '@/features/shop/cartSlice';
 import { useToast } from '@/hooks/use-toast';
 
 const ProductDetailsPage = () => {
-  // State management
   const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState('');
@@ -34,7 +33,6 @@ const ProductDetailsPage = () => {
   const { id } = useParams();
   const {toast} = useToast();
   
-  // Only select data after it's been fetched
   const productDetails = useSelector((state) => 
     isDataFetched ? state.shopProducts.productDetails : null
   );
@@ -56,7 +54,6 @@ const ProductDetailsPage = () => {
   })
 }
 
-  // Fetch product data
   useEffect(() => {
     const getProductData = async () => {
       try {
@@ -72,14 +69,12 @@ const ProductDetailsPage = () => {
     getProductData();
   }, [id]);
 
-  // Set main image once product details are available
   useEffect(() => {
     if (productDetails?.image) {
       setMainImage(productDetails.image);
     }
   }, [productDetails]);
 
-  // Loading state
   if (!isDataFetched || !productDetails) {
     return (
       <div className="container mx-auto px-4 py-8 flex items-center justify-center">
@@ -90,7 +85,6 @@ const ProductDetailsPage = () => {
 
   console.log({productDetails});
 
-  // Error state
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8 flex items-center justify-center">
@@ -99,15 +93,12 @@ const ProductDetailsPage = () => {
     );
   }
 
-  // Generate product images array
   const productImages = [
     productDetails.image,
-  ].filter(Boolean); // Filter out any undefined/null values
+  ].filter(Boolean); 
 
-  // Default sizes
   const sizes = ['XS', 'SM', 'MD', 'L', 'XL','2XL'];
 
-  // Handle quantity changes
   const handleQuantityDecrease = () => {
     setQuantity(Math.max(1, quantity - 1));
   };
@@ -116,7 +107,6 @@ const ProductDetailsPage = () => {
     setQuantity(Math.min(productDetails.totalStock, quantity + 1));
   };
 
-  // Format price with 2 decimal places
   const formatPrice = (price) => Number(price).toFixed(2);
 
   return (

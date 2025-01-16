@@ -30,7 +30,7 @@ const UserMenuSheet = ({ open, onOpenChange }) => {
         
         <div className="flex flex-col space-y-1 mt-6">
           <Link 
-            to="/profile"
+            to="/shop/account"
             className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors"
             onClick={() => onOpenChange(false)}
           >
@@ -75,7 +75,7 @@ const UserMenuSheet = ({ open, onOpenChange }) => {
           </Link>
 
           <Link 
-            to="/account-settings"
+            to="/shop/account-setting"
             className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent transition-colors"
             onClick={() => onOpenChange(false)}
           >

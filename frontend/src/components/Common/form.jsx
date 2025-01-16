@@ -13,7 +13,7 @@ function CommonForm({
   isBtnDisabled
  }) {
   function renderInputsByComponentType(getControlItem) {
-    const value = formData[getControlItem.name] || ''; // Handle undefined formData safely
+    const value = formData[getControlItem.name] || ''; 
 
     switch (getControlItem.componentType) {
       case 'input':
@@ -96,7 +96,8 @@ function CommonForm({
           </div>
         ))}
       </div>
-      <button disabled={isBtnDisabled} type="submit" className="mt-2 w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+      <button disabled={isBtnDisabled} type="submit"         
+      className="mt-2 w-full bg-foreground text-background py-2 px-4 rounded transition-colors duration-200 hover:bg-gray-800 disabled:opacity-50 disabled:hover:bg-foreground">
         {buttonText || 'Submit'}
       </button>
     </form>
