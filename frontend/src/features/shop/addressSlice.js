@@ -6,7 +6,7 @@ const initialState = {
     addressList: [] 
 }
 
-export const addNewAddress = createAsyncThunk('/addresses/addNewAddress',  async ({formData}, { rejectWithValue }) => {
+export const addNewAddress = createAsyncThunk('/addresses/addNewAddress',  async (formData, { rejectWithValue }) => {
   console.log(formData,"since the add to cart is");
     try {
       let response;
@@ -65,7 +65,7 @@ export const deleteAddress = createAsyncThunk('/addresses/deleteAddress',  async
     try {
       let response;
       await Util.call_Delete_by_URI(
-        `shop/cart/${userId}/${addressId}`,
+        `shop/address/delete/${userId}/${addressId}`,
         (res, status) => {
           console.log(res);
           response = res;
