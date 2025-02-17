@@ -5,6 +5,7 @@ import { addressFormControls } from '@/config';
 import {useDispatch, useSelector} from 'react-redux';
 import { addNewAddress, deleteAddress, editAddress, fetchAllAddresses } from '@/features/shop/addressSlice';
 import AddressCard from './AddressCard';
+import { useToast } from '@/hooks/use-toast';
 
 const initialAddressFormData = {
   address : '',
@@ -20,9 +21,18 @@ function Address() {
   const dispatch = useDispatch();
   const {user} = useSelector(state => state.auth);
   const {addressList} = useSelector(state => state.shopAddress);
+  const { toast } = useToast();
 
   function handleManageAddress(event){
     event.preventDefault();
+
+    if(addressList.length >= 3  && currentEditedId === null){
+      toast({
+        description: 'You can add maximum 3 addresses',
+        variant: 'destructive'
+      })
+      return;
+    }
 
     currentEditedId !== null ? dispatch(editAddress({
       userId : user._id,
@@ -33,7 +43,10 @@ function Address() {
       if(data){
         dispatch(fetchAllAddresses(user?._id)).unwrap();
         setCurrentEditedId(null);
-        setFormData(initialAddressFormData)
+        setFormData(initialAddressFormData);
+        toast({
+          description: "Address updated successfully",
+        })
       }
     }) : dispatch(addNewAddress({
       ...formData,
@@ -43,7 +56,10 @@ function Address() {
       console.log(data);
       if(data){
         dispatch(fetchAllAddresses(user?._id)).unwrap();
-        setFormData(initialAddressFormData)
+        setFormData(initialAddressFormData);
+        toast({
+          description: "Address added successfully",
+        })
       }
     })
   }
@@ -56,11 +72,15 @@ function Address() {
       console.log(data);
       if(data){
         dispatch(fetchAllAddresses(user?._id)).unwrap();
+        toast({
+          description: "Address deleted successfully",
+          variant : 'destructive'
+        })
       }
     } )
   }
 
-  function handleEditAddress(getCurrentAddress){
+  function handleEditAddress(getCurrentAddress) {
     setCurrentEditedId(getCurrentAddress?._id);
     setFormData({
       ...formData,
@@ -68,8 +88,8 @@ function Address() {
       city: getCurrentAddress?.city,
       phone: getCurrentAddress?.phone,
       pincode: getCurrentAddress?.pincode,
-      notes: getCurrentAddress?.notes
-    })
+      notes: getCurrentAddress?.notes,
+    });
   }
 
   function isFormValid(){

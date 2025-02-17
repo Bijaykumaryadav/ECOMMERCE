@@ -7,11 +7,13 @@ import { Minus, Plus, Trash2, ShoppingCart, Tag, Check, X, Info } from "lucide-r
 import { useDispatch, useSelector } from 'react-redux';
 import CartItemsContent from './CartItemsContent';
 import { fetchCartItems } from '@/features/shop/cartSlice';
+import { useNavigate } from 'react-router-dom';
 
 export default function Cart() {
   const {cartItems} = useSelector((state) => state.shopCart);
   const {user} = useSelector(state => state.auth);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Calculate subtotal
   const subtotal = cartItems && cartItems.items && cartItems.items.length > 0 
@@ -37,7 +39,6 @@ export default function Cart() {
     "FREESHIP": { discount: 9.99, type: "shipping" }
   };
 
-  // Calculate discount based on applied coupon
   let discount = 0;
   if (appliedCoupon) {
     if (appliedCoupon.type === "percentage") {
@@ -47,7 +48,6 @@ export default function Cart() {
     }
   }
 
-  // Calculate total including all components
   const totalCartAmount = subtotal + shipping + tax - discount;
 
   const applyCoupon = () => {
@@ -181,6 +181,7 @@ export default function Cart() {
                 <Button 
                   className="w-full mt-6"
                   size="lg"
+                  onClick = {() => navigate('/shop/checkout')}
                 >
                   Proceed to Checkout
                 </Button>
