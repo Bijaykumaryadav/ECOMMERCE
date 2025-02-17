@@ -1,6 +1,7 @@
 import React from 'react'
 import { Card, CardContent, CardTitle } from '../ui/card'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '../ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
+import { Button } from '../ui/button'
 
 function Orders() {
   return (
@@ -22,7 +23,17 @@ function Orders() {
             </TableRow>
           </TableHeader>
           <TableBody>
-
+            <TableRow>
+              <TableCell>123456</TableCell>
+              <TableCell>27/06/2024</TableCell>
+              <TableCell>In Process</TableCell>
+              <TableCell>$10000</TableCell>
+              <TableCell>
+                <Button>
+                  View Details
+                </Button>
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </CardContent>

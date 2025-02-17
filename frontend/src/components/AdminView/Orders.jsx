@@ -1,9 +1,12 @@
+import { AdminOrders } from '@/pages/AdminView'
 import React from 'react'
+// import AdminOrdersDetails from './OrdersDetails'
 
 function Orders() {
   return (
     <div>
-      This is the orders page
+      <AdminOrders/>
+      {/* <AdminOrdersDetails/> */}
     </div>
   )
 }

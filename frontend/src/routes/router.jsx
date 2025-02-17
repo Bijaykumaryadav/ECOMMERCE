@@ -10,6 +10,7 @@ import AdminLayout from "@/components/AdminView/AdminLayout";
 import UnauthPage from "@/pages/Layout/UnauthPage";
 import { ResetPassword, ForgotPassword, GoogleCallback } from "../pages/Auth/index";
 import Cart from "@/components/Cart/Cart";
+import Orders from "@/components/AdminView/Orders";
 
 export const router = createBrowserRouter([
   {
@@ -43,7 +44,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "orders",
-            element: <AdminOrders />
+            element: <Orders />
           },
           {
             path: "features",
