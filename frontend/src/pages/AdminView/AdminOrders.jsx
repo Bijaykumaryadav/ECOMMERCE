@@ -38,7 +38,7 @@ function AdminOrders() {
                   <DialogTrigger asChild>
                     <Button>View Details</Button>
                   </DialogTrigger>
-                  <AdminOrdersDetails orderId="123456" />
+                  <AdminOrdersDetails orderId="123456" orderDate="27/06/2024" orderStatus="In Process" orderPrice="$100" />
                 </Dialog>
               </TableCell>
             </TableRow>

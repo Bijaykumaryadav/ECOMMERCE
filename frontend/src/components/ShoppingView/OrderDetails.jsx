@@ -1,4 +1,3 @@
-// components/AdminView/AdminOrdersDetails.jsx
 import React,{useState} from 'react';
 import { DialogContent, DialogHeader, DialogTitle, DialogPortal } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
@@ -9,14 +8,7 @@ const initialFormData = {
   status : ''
 }
 
-function AdminOrdersDetails({ orderId , orderDate , orderStatus , orderPrice }) {
-
-  const [formData,setFormData] = useState(initialFormData);
-
-  function handleUpdateStatus(e){
-    e.preventDefault();
-  }
-
+function ShoppingOrderDetails() {
   return (
     <DialogPortal>
       <DialogContent className="sm:max-w-[600px]">
@@ -92,7 +84,7 @@ function AdminOrdersDetails({ orderId , orderDate , orderStatus , orderPrice }) 
         </div>
       </DialogContent>
     </DialogPortal>
-  );
+  )
 }
 
-export default AdminOrdersDetails;
+export default ShoppingOrderDetails
