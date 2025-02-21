@@ -33,6 +33,7 @@ const addAddress = async(req,res) => {
         null
       )
     }catch(error){
+      console.log("Error is",error);
     return sendResponse(
       res,
       500,
@@ -186,4 +187,4 @@ const deleteAddress = async(req,res) => {
     }
 }
 
-module.exports = {addAddress,fetchAllAddress,editAddress,deleteAddress}
+module.exports = {addAddress,fetchAllAddress,editAddress,deleteAddress};

@@ -8,7 +8,14 @@ const initialFormData = {
   status : ''
 }
 
-function ShoppingOrderDetails() {
+function ShoppingOrderDetails({ orderId , orderDate , orderStatus , orderPrice }) {
+
+  const [formData,setFormData] = useState(initialFormData);
+
+  function handleUpdateStatus(e){
+    e.preventDefault();
+  }
+  
   return (
     <DialogPortal>
       <DialogContent className="sm:max-w-[600px]">

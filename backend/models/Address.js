@@ -9,4 +9,4 @@ const AdderssSchema = new mongoose.Schema({
     notes: String
 },{timestamps: true})
 
-mongoose.exports = mongoose.model('Address',AdderssSchema)
+module.exports = mongoose.model('Address',AdderssSchema);
