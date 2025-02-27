@@ -1,119 +1,99 @@
-const {sendResponse} = require("../../utils/sendResponse");
-const paypal = require("../.../helpers/paypal");
+const { sendResponse } = require("../../utils/sendResponse");
+const client = require("../../helpers/paypal");
 const Order = require("../../models/Order");
+const paypal = require("@paypal/checkout-server-sdk");
 
-
-const createOrder = async(req,res) => {
-    try{
+// Create PayPal Order
+const createOrder = async (req, res) => {
+    try {
         const {
             userId,
             cartItems,
             addressInfo,
             orderStatus,
             paymentMethod,
-            totalAmount ,
-            orderDate ,
-            orderUpdateDate ,
-            paymentId ,
-            payerId } = req.body;
+            paymentStatus,
+            totalAmount,
+            orderDate,
+            orderUpdateDate
+        } = req.body;
 
-    const create_payment_json = {
-        intent: 'sale',
-        payer: {
-            payment_method : 'paypal'
-        },
-        redirect_urls: {
-            return_url : 'http://localhost:5173/shop/paypal-return',
-            cancel_url : 'http://localhost:5173/shop/paypal-cancel'
-        },
-        transactions : [
-            {
-              item_list : {
-                items : cartItems.map(item => ({
-                    name : item.title,
-                    sku : item.productId,
-                    price : item.price.toFixed(2),
-                    currency : 'USD',
-                    quantity : item.quantity                    
-                }))
-              },
-              amount : {
-                currency: 'USD',
-                total : totalAmount.toFixed(2)
-              },
-              description : 'description'
-            }
-        ]
-    }
+        // Prepare PayPal Order Request
+        const request = new paypal.orders.OrdersCreateRequest();
+        request.prefer("return=representation");
+        request.requestBody({
+            intent: "CAPTURE",
+            purchase_units: [
+                {
+                    amount: {
+                        currency_code: "USD",
+                        value: totalAmount.toFixed(2),
+                    },
+                    description: "Order Payment",
+                },
+            ],
+            application_context: {
+                return_url: "http://localhost:5173/shop/paypal-return",
+                cancel_url: "http://localhost:5173/shop/paypal-cancel",
+            },
+        });
 
-    paypal.payment.create(create_payment_json,async(error,paymentInfo) => {
-        if(error){
-            console.log(error);
+        // Execute PayPal Order Creation
+        const order = await client.execute(request);
 
-            return sendResponse(
-            res,
-            400,
-            false,
-            "Error while creating paypal payment",
-            null,
-            null
-            ) 
-        }else{
-            const newlyCreatedOrder = new Order({
+        // Save Order in Database
+        const newOrder = new Order({
             userId,
             cartItems,
             addressInfo,
             orderStatus,
             paymentMethod,
-            totalAmount ,
-            orderDate ,
-            orderUpdateDate ,
-            paymentId ,
-            payerId
-            })
+            paymentStatus,
+            totalAmount,
+            orderDate,
+            orderUpdateDate,
+            paymentId: order.result.id, // Store PayPal Order ID
+            payerId: null,
+        });
 
-            await newlyCreatedOrder.save();
+        await newOrder.save();
 
-            const approvalURL = paymentInfo.links.find(link => link.rel === 'approval_url').href;
+        // Send PayPal approval URL
+        const approvalURL = order.result.links.find(link => link.rel === "approve").href;
+        return sendResponse(res, 200, true, "Success", { approvalURL, orderId: newOrder._id }, null);
+    } catch (error) {
+        console.error("Error creating PayPal order:", error);
+        return sendResponse(res, 400, false, "Error while creating PayPal payment", null, null);
+    }
+};
 
-            return sendResponse(
-                res,
-                200,
-                true,
-                "success",
-                {approvalURL,
-                orderId: newlyCreatedOrder._id},
-                null
-            )
+// Capture Payment
+const capturePayment = async (req, res) => {
+    try {
+        const { orderId } = req.body; // Order ID from frontend
+
+        // Capture PayPal payment
+        const request = new paypal.orders.OrdersCaptureRequest(orderId);
+        request.requestBody({});
+
+        const captureResponse = await client.execute(request);
+        const captureDetails = captureResponse.result;
+
+        if (captureDetails.status === "COMPLETED") {
+            // Update order in database
+            await Order.findOneAndUpdate(
+                { paymentId: orderId },
+                { paymentStatus: "Paid", payerId: captureDetails.payer.payer_id }
+            );
+
+            return sendResponse(res, 200, true, "Payment Captured Successfully", captureDetails, null);
+        } else {
+            return sendResponse(res, 400, false, "Payment Capture Failed", null, null);
         }
-    })
-    }catch(error){
-        console.log("Error is:"error);
-        return sendResponse(
-          res,
-          400,
-          false,
-          "Some Error occured!",
-          null,
-          null
-        )
+    } catch (error) {
+        console.error("Error capturing payment:", error);
+        return sendResponse(res, 400, false, "Error capturing PayPal payment", null, null);
     }
-}
+};
 
-const capturePayment = async(req,res) => {
-    try{
-
-    }catch(error){
-        console.log("Error is:"error);
-        return sendResponse(
-          res,
-          400,
-          false,
-          "Some Error occured!",
-          null,
-          null
-        )
-    }
-}
-
-module.exports = {createOrder,capturePayment};
+module.exports = { createOrder, capturePayment };
