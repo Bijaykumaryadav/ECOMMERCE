@@ -3,7 +3,7 @@ import { ErrorPage, HomePage, LayoutPage } from "../pages/Layout";
 import Auth from "@/components/Auth/Auth";
 import { AdminDashboard, AdminFeatures, AdminOrders, AdminProducts } from "@/pages/AdminView";
 import ShoppingLayout from "@/components/ShoppingView/ShoppingLayout";
-import { ShoppingAccount, ShoppingCheckout, ShoppingHomePage, ShoppingListingPage } from "@/pages/ShoppingView";
+import { ShoppingAccount, ShoppingCheckout, ShoppingHomePage, ShoppingListingPage , PaypalReturnPage } from "@/pages/ShoppingView";
 import ProductDetailsPage from "@/components/ShoppingView/ProductDetails";
 import CheckAuth from "@/components/Common/CheckAuth";
 import AdminLayout from "@/components/AdminView/AdminLayout";
@@ -75,6 +75,10 @@ export const router = createBrowserRouter([
           {
             path: "checkout",
             element: <ShoppingCheckout />
+          },
+          {
+            path : "paypal-return",
+            element : <PaypalReturnPage/>
           },
           {
             path: "account",
