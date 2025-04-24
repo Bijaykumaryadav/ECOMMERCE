@@ -2,12 +2,15 @@ const { sendResponse } = require("../../utils/sendResponse");
 const client = require("../../helpers/paypal");
 const Order = require("../../models/Order");
 const paypal = require("@paypal/checkout-server-sdk");
+const Cart = require("../../models/Cart");
+const Product = require("../../models/Products");
 
 // Create PayPal Order
 const createOrder = async (req, res) => {
     try {
         const {
             userId,
+            cartId,
             cartItems,
             addressInfo,
             orderStatus,
@@ -15,7 +18,9 @@ const createOrder = async (req, res) => {
             paymentStatus,
             totalAmount,
             orderDate,
-            orderUpdateDate
+            orderUpdateDate,
+            paymentId,
+            payerId,
         } = req.body;
 
         // Prepare PayPal Order Request
@@ -44,6 +49,7 @@ const createOrder = async (req, res) => {
         // Save Order in Database
         const newOrder = new Order({
             userId,
+            cartId,
             cartItems,
             addressInfo,
             orderStatus,
@@ -52,8 +58,8 @@ const createOrder = async (req, res) => {
             totalAmount,
             orderDate,
             orderUpdateDate,
-            paymentId: order.result.id, // Store PayPal Order ID
-            payerId: null,
+            paymentId,
+            payerId,
         });
 
         await newOrder.save();
@@ -67,33 +73,86 @@ const createOrder = async (req, res) => {
     }
 };
 
-// Capture Payment
 const capturePayment = async (req, res) => {
-    try {
-        const { orderId } = req.body; // Order ID from frontend
+  const {payerId, paypalOrderId, orderId } = req.body; 
 
-        // Capture PayPal payment
-        const request = new paypal.orders.OrdersCaptureRequest(orderId);
-        request.requestBody({});
-
-        const captureResponse = await client.execute(request);
-        const captureDetails = captureResponse.result;
-
-        if (captureDetails.status === "COMPLETED") {
-            // Update order in database
-            await Order.findOneAndUpdate(
-                { paymentId: orderId },
-                { paymentStatus: "Paid", payerId: captureDetails.payer.payer_id }
-            );
-
-            return sendResponse(res, 200, true, "Payment Captured Successfully", captureDetails, null);
-        } else {
-            return sendResponse(res, 400, false, "Payment Capture Failed", null, null);
-        }
-    } catch (error) {
-        console.error("Error capturing payment:", error);
-        return sendResponse(res, 400, false, "Error capturing PayPal payment", null, null);
+  try {
+    const order = await Order.findById(orderId);
+    console.log(order,"order is:");
+    if (!order) {
+      return sendResponse(res, 404, false, "Order not found", null, null);
     }
+
+    if (order.paymentStatus === "Paid") {
+    console.log(order,"order is:");
+      await Cart.findByIdAndDelete(order.cartId);
+      return sendResponse(res, 200, true, "Payment Already Captured", { status: "COMPLETED" }, null);
+    }
+
+    const request = new paypal.orders.OrdersCaptureRequest(paypalOrderId);
+    request.requestBody({});
+
+    const captureResponse = await client.execute(request);
+    const captureDetails = captureResponse.result;
+    console.log("CaptureDetailis",captureDetails);
+
+    if (captureDetails.status === "COMPLETED") {
+      order.paymentStatus = "Paid";
+      order.orderStatus = "Confirmed";
+      order.paymentId = captureDetails.id;
+      order.payerId = captureDetails.payer.payer_id;
+
+      for (let item of order.cartItems) {
+        const product = await Product.findById(item.productId);
+        if (!product) {
+          return sendResponse(res, 404, false, `Product not found for ID: ${item.productId}`, null, null);
+        }
+
+        product.totalStock -= item.quantity;
+        await product.save();
+      }
+
+      await Cart.findByIdAndDelete(order.cartId);
+      await order.save();
+
+      return sendResponse(res, 200, true, "Payment Captured Successfully", captureDetails, null);
+    } else {
+      return sendResponse(res, 400, false, "Payment Capture Failed", null, null);
+    }
+
+  } catch (error) {
+    // ✅ `orderId` is now in scope here
+    if (
+      error.statusCode === 422 &&
+      error._originalError &&
+      error._originalError.text &&
+      error._originalError.text.includes("ORDER_ALREADY_CAPTURED")
+    ) {
+      const order = await Order.findById(orderId);
+      if (order) {
+        order.paymentStatus = "Paid";
+        order.orderStatus = "Confirmed";
+
+        for (let item of order.cartItems) {
+          const product = await Product.findById(item.productId);
+          if (product) {
+            product.totalStock -= item.quantity;
+            await product.save();
+          }
+        }
+
+        await Cart.findByIdAndDelete(order.cartId);
+        await order.save();
+      }
+
+      return sendResponse(res, 200, true, "Payment Already Captured", { status: "COMPLETED" }, null);
+    }
+
+    console.error("Error capturing PayPal payment:", error);
+    return sendResponse(res, 400, false, "Error capturing PayPal payment", null, error.message);
+  }
 };
+
+
 
 module.exports = { createOrder, capturePayment };

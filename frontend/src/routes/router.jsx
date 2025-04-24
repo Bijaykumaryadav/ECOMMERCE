@@ -11,6 +11,7 @@ import UnauthPage from "@/pages/Layout/UnauthPage";
 import { ResetPassword, ForgotPassword, GoogleCallback } from "../pages/Auth/index";
 import Cart from "@/components/Cart/Cart";
 import Orders from "@/components/AdminView/Orders";
+import PaymentSuccessPage from "@/pages/ShoppingView/PaypalSuccess";
 
 export const router = createBrowserRouter([
   {
@@ -79,6 +80,10 @@ export const router = createBrowserRouter([
           {
             path : "paypal-return",
             element : <PaypalReturnPage/>
+          },
+          {
+            path: "order-success",
+            element: <PaymentSuccessPage/>
           },
           {
             path: "account",

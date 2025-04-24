@@ -1,12 +1,13 @@
 import Util from "@/helpers/Util";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-
 const initialState = {
-    approvalURL : null,
-    isLoading : false,
-    orderId : null
-}
+  approvalURL: null,
+  isLoading: false,
+  orderId: null,
+  paypalOrderId: null,
+  payerID: null
+};
 
 export const createNewOrder = createAsyncThunk("/order/createNewOrder",  
     async (orderData, { rejectWithValue }) => {
@@ -26,23 +27,84 @@ export const createNewOrder = createAsyncThunk("/order/createNewOrder",
     }
   })
 
-const shoppingOrderSlice = createSlice({
-    name : "shoppingOrderSlice",
-    initialState,
-    reducers : {},
-    extraReducers : (builder) => {
-        builder.addCase(createNewOrder.pending , (state) => {
-            state.isLoading = true
-        }).addCase(createNewOrder.fulfilled , (state,action) => {         
-            state.isLoading = false,
-            state.approvalURL = action.payload.approvalURL,
-            state.orderId = action.payload.orderId
-        }).addCase(createNewOrder.rejected , (state) => {
-            state.isLoading = false,
-            state.approvalURL = null,
-            state.orderId = null
-        })
+// Add a new thunk for handling the return from PayPal
+export const capturePayPalPayment = createAsyncThunk(
+  "/order/capturePayment",
+  async ({payerId, paypalOrderId, orderId }, { rejectWithValue }) => {
+    try {
+      return await new Promise((resolve, reject) => {
+        Util.call_Post_by_URI(
+          'shop/order/capture',
+          {payerId, paypalOrderId, orderId },
+          (res, status) => {
+            if (status >= 200 && status < 300) {
+              resolve(res);
+            } else {
+              reject({ response: { data: res } });
+            }
+          }
+        );
+      });
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error);
     }
-})
+  }
+);
 
+const shoppingOrderSlice = createSlice({
+  name: "shoppingOrderSlice",
+  initialState,
+  reducers: {
+    // Add a reducer to handle setting PayPal return parameters
+    setPayPalReturnParams: (state, action) => {
+      const { token, PayerID } = action.payload;
+      state.payerID = PayerID;
+      state.paypalOrderId = token;
+    },
+    clearOrderData: (state) => {
+      state.approvalURL = null;
+      state.orderId = null;
+      state.paypalOrderId = null;
+      state.payerID = null;
+    }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(createNewOrder.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createNewOrder.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.approvalURL = action.payload.approvalURL;
+        state.orderId = action.payload.orderId;
+        state.paypalOrderId = action.payload.paypalOrderId;
+        // Store orderId in sessionStorage
+        sessionStorage.setItem('currentOrderId', JSON.stringify(action.payload.orderId));
+      })
+      .addCase(createNewOrder.rejected, (state) => {
+        state.isLoading = false;
+        state.approvalURL = null;
+        state.orderId = null;
+        state.paypalOrderId = null;
+      })
+      .addCase(capturePayPalPayment.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(capturePayPalPayment.fulfilled, (state) => {
+        state.isLoading = false;
+        // Clear data after successful payment
+        state.approvalURL = null;
+        state.orderId = null;
+        state.paypalOrderId = null;
+        state.payerID = null;
+        // Clear sessionStorage
+        sessionStorage.removeItem('currentOrderId');
+      })
+      .addCase(capturePayPalPayment.rejected, (state) => {
+        state.isLoading = false;
+      });
+  }
+});
+
+export const { setPayPalReturnParams, clearOrderData } = shoppingOrderSlice.actions;
 export default shoppingOrderSlice.reducer;

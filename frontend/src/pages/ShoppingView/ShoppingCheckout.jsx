@@ -34,7 +34,8 @@ function ShoppingCheckout() {
 
   function handleInitiatePaypalPayment(){
     const orderData = {
-            userId : user?.id,
+            userId : user?._id,
+            cartId: cartItems?._id,
             cartItems : cartItems.items.map(singleCartItem => ({
             productId : singleCartItem?.productId,
             title: singleCartItem?.title,
@@ -70,9 +71,11 @@ function ShoppingCheckout() {
     })
   }
 
-  if(approvalURL){
+ useEffect(() => {
+  if (approvalURL && isPaymentStart) {
     window.location.href = approvalURL;
   }
+}, [approvalURL, isPaymentStart]);
 
   return (
     <div className="flex flex-col">
