@@ -6,7 +6,9 @@ const initialState = {
   isLoading: false,
   orderId: null,
   paypalOrderId: null,
-  payerID: null
+  payerID: null,
+  orderList: [],
+  orderDetails: null,
 };
 
 export const createNewOrder = createAsyncThunk("/order/createNewOrder",  
@@ -47,6 +49,40 @@ export const capturePayPalPayment = createAsyncThunk(
       });
     } catch (error) {
       return rejectWithValue(error.response?.data || error);
+    }
+  }
+);
+
+export const getAllOrdersByUserId = createAsyncThunk('/order/getAllOrdersByUserId',  async (userId, { rejectWithValue }) => {
+    try {
+      let response;
+      await Util.call_get_with_uri_param(
+        `shop/order/list/${userId}`,
+        (res, status) => {
+          console.log(res);
+          response = res;
+        }
+      );
+      return response?.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getOrderDetails = createAsyncThunk('/order/getOrderDetails',  async (id, { rejectWithValue }) => {
+    try {
+      let response;
+      await Util.call_get_with_uri_param(
+        `shop/order/details/${id}`,
+        (res, status) => {
+          console.log(res);
+          response = res;
+        }
+      );
+      return response?.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -102,6 +138,28 @@ const shoppingOrderSlice = createSlice({
       })
       .addCase(capturePayPalPayment.rejected, (state) => {
         state.isLoading = false;
+      })
+      .addCase(getAllOrdersByUserId.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAllOrdersByUserId.fulfilled, (state) => {
+        state.isLoading = false;
+        state.orderList = action.payload;
+      })
+      .addCase(getAllOrdersByUserId.rejected, (state) => {
+        state.isLoading = false;
+        state.orderList = [];
+      })
+      .addCase(getOrderDetails.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getOrderDetails.fulfilled, (state) => {
+        state.isLoading = false;
+        state.orderDetails = action.payload;
+      })
+      .addCase(getOrderDetails.rejected, (state) => {
+        state.isLoading = false;
+        state.orderDetails = null;
       });
   }
 });

@@ -68,4 +68,4 @@ function CartItemsContent({cartItems}) {
   )
 }
 
-export default CartItemsContent
+export default CartItemsContent;

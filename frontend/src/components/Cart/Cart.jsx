@@ -8,12 +8,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import CartItemsContent from './CartItemsContent';
 import { fetchCartItems } from '@/features/shop/cartSlice';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast'
+
 
 export default function Cart() {
   const {cartItems} = useSelector((state) => state.shopCart);
   const {user} = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {toast} = useToast();
 
   // Calculate subtotal
   const subtotal = cartItems && cartItems.items && cartItems.items.length > 0 
@@ -66,6 +69,18 @@ export default function Cart() {
     setAppliedCoupon(null);
     setCoupon("");
   };
+
+  const handleCheckout = () => {
+      // To this:
+  if(!cartItems?.items || cartItems.items.length === 0){
+    toast({
+      title: "Your Cart is Empty.",
+      variant: "destructive",
+    })
+    return;
+  }
+  navigate("/shop/checkout");
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground p-8">
@@ -181,8 +196,7 @@ export default function Cart() {
                 <Button 
                   className="w-full mt-6"
                   size="lg"
-                  onClick = {() => navigate('/shop/checkout')}
-                >
+                  onClick={()=> handleCheckout()}>
                   Proceed to Checkout
                 </Button>
 

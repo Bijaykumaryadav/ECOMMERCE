@@ -43,7 +43,7 @@ const PaypalReturnPage = () => {
             if (error && 
                 ((error.success === true) || 
                  (error.message && (error.message.includes("Already Captured") || 
-                                    error.message.includes("COMPLETED"))))) {
+                  error.message.includes("COMPLETED"))))) {
               navigate('/shop/order-success');
             } else {
               navigate('/shop/order-failed');

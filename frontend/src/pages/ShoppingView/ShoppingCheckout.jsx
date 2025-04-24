@@ -6,6 +6,7 @@ import CartItemsContent from '@/components/Cart/CartItemsContent';
 import { fetchCartItems } from '@/features/shop/cartSlice';
 import {createNewOrder} from "@/features/order/orderSlice";
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast'
 
 function ShoppingCheckout() {
   const { addressList } = useSelector(state => state.shopAddress);
@@ -15,6 +16,7 @@ function ShoppingCheckout() {
   const [currentSelectedAddress,setCurrentSelectedAddress] = useState(null);
   const [isPaymentStart,setIsPaymentStart] = useState(false);
   const {approvalURL} = useSelector(state => state.shopOrder);
+  const {toast} = useToast();
 
   console.log("currentSelected address is:",currentSelectedAddress);
 
@@ -30,9 +32,29 @@ function ShoppingCheckout() {
   const discount = 0; 
   const totalAmount = subtotal + shipping + tax - discount;
 
-    console.log(cartItems,"Cart items is ss:");
+    console.log({cartItems},"Cart items is ss:");
 
   function handleInitiatePaypalPayment(){
+
+  if(cartItems.length === 0 || cartItems.length === undefined){
+  
+  // To this:
+  if(!cartItems?.items || cartItems.items.length === 0){
+    toast({
+      title: "Your Cart is Empty.",
+      variant: "destructive",
+    })
+    return;
+  }
+  }
+    if(currentSelectedAddress === null){
+      toast({
+        title: "Please select one address to proceed.",
+        variant: "destructive",
+      })
+      return;
+    }
+
     const orderData = {
             userId : user?._id,
             cartId: cartItems?._id,
