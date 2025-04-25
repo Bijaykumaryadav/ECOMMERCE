@@ -153,6 +153,37 @@ const capturePayment = async (req, res) => {
   }
 };
 
+const getAllOrdersByUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
 
+    const orders = await Order.find({ userId });
 
-module.exports = { createOrder, capturePayment };
+    if (!orders.length) {
+      return sendResponse(res,404,false,"No Orders found!",null,null);
+    }
+    return sendResponse(res,200,true,"Successfully Fetched All Orders",{data: orders},null);
+  } catch (e) {
+    console.log(e);
+    return sendResponse(res,500,false,"Some Error Occured!",null,{e});
+  }
+};
+
+const getOrderDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const order = await Order.findById(id);
+
+    if (!order) {
+      return sendResponse(res,404,false,"No Orders found!",null,null);
+    }
+
+    return sendResponse(res,200,true,"Successfully Fetched All Orders",{data: order},null);
+  } catch (e) {
+    console.log(e);
+    return sendResponse(res,500,false,"Some Error Occured!",null,{e});
+  }
+};
+
+module.exports = { createOrder, capturePayment ,getAllOrdersByUser , getOrderDetails };
