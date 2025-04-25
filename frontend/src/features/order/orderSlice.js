@@ -91,7 +91,9 @@ const shoppingOrderSlice = createSlice({
   name: "shoppingOrderSlice",
   initialState,
   reducers: {
-    // Add a reducer to handle setting PayPal return parameters
+    resetOrderDetails: (state) => {
+      state.orderDetails = null;
+    },
     setPayPalReturnParams: (state, action) => {
       const { token, PayerID } = action.payload;
       state.payerID = PayerID;
@@ -114,7 +116,6 @@ const shoppingOrderSlice = createSlice({
         state.approvalURL = action.payload.approvalURL;
         state.orderId = action.payload.orderId;
         state.paypalOrderId = action.payload.paypalOrderId;
-        // Store orderId in sessionStorage
         sessionStorage.setItem('currentOrderId', JSON.stringify(action.payload.orderId));
       })
       .addCase(createNewOrder.rejected, (state) => {
@@ -128,7 +129,6 @@ const shoppingOrderSlice = createSlice({
       })
       .addCase(capturePayPalPayment.fulfilled, (state) => {
         state.isLoading = false;
-        // Clear data after successful payment
         state.approvalURL = null;
         state.orderId = null;
         state.paypalOrderId = null;
@@ -164,5 +164,5 @@ const shoppingOrderSlice = createSlice({
   }
 });
 
-export const { setPayPalReturnParams, clearOrderData } = shoppingOrderSlice.actions;
+export const { resetOrderDetails , setPayPalReturnParams, clearOrderData } = shoppingOrderSlice.actions;
 export default shoppingOrderSlice.reducer;

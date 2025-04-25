@@ -1,13 +1,23 @@
 // components/AdminView/AdminOrders.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AdminOrdersDetails from "@/components/AdminView/OrdersDetails";
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllOrdersForAdmin } from '@/features/admin/orderSlice';
 
 function AdminOrders() {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const {orderList,orderDetails} = useSelector(state => state.adminOrder);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllOrdersForAdmin()).unwrap();
+  },[dispatch]);
+
+  console.log(orderList,"orderList");
 
   return (
     <Card>
