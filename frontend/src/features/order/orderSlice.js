@@ -142,7 +142,7 @@ const shoppingOrderSlice = createSlice({
       .addCase(getAllOrdersByUserId.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getAllOrdersByUserId.fulfilled, (state) => {
+      .addCase(getAllOrdersByUserId.fulfilled, (state,action) => {
         state.isLoading = false;
         state.orderList = action.payload;
       })
@@ -153,7 +153,7 @@ const shoppingOrderSlice = createSlice({
       .addCase(getOrderDetails.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getOrderDetails.fulfilled, (state) => {
+      .addCase(getOrderDetails.fulfilled, (state,action) => {
         state.isLoading = false;
         state.orderDetails = action.payload;
       })
