@@ -12,12 +12,8 @@ const initialFormData = {
 
 function ShoppingOrderDetails({ orderDetails }) {
 
-  const [formData,setFormData] = useState(initialFormData);
   const {user} = useSelector(state => state.auth);
 
-  function handleUpdateStatus(e){
-    e.preventDefault();
-  }
   
   return (
     <DialogPortal className="overflow-auto">
