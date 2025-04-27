@@ -5,7 +5,9 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '../ui/separator';
 import CommonForm from '../Common/form';
 import { Badge } from '../ui/badge';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllOrdersForAdmin, getOrderDetailsForAdmin, updateOrderStatus } from '@/features/admin/orderSlice';
+import { useToast } from '@/hooks/use-toast';
 
 const initialFormData = {
   status : ''
@@ -15,11 +17,25 @@ function AdminOrdersDetails({ orderDetails }) {
 
   const [formData,setFormData] = useState(initialFormData);
   const {user} = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+  const {toast} = useToast();
 
-  function handleUpdateStatus(){
+  function handleUpdateStatus(e){
     e.preventDefault();
+    console.log(formData,"formData");
+    const {status} = formData;
+    dispatch(updateOrderStatus({id: orderDetails?._id,orderStatus:status}))
+    .then((data) => {
+      if(data?.payload?.success){
+        dispatch(getOrderDetailsForAdmin(orderDetails?._id));
+        dispatch(getAllOrdersForAdmin());
+        setFormData(initialFormData);
+        toast({
+          title: data?.payload?.message
+        })
+      }}
+    )
   }
-
 
   return (
     <DialogPortal>

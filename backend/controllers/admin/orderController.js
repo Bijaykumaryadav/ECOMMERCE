@@ -35,4 +35,24 @@ const getOrderDetails = async (req, res) => {
   }
 };
 
-module.exports = {getAllOrdersOfAllUsers , getOrderDetails}
+const updateOrderStatus = async(req,res) => {
+  try{
+    const {id} = req.params;
+    const {orderStatus} = req.body;
+    const order = await Order.findById(id);
+
+    if (!order) {
+      return sendResponse(res,404,false,"No Orders found!",null,null);
+    }
+
+    await Order.findByIdAndUpdate(id,{orderStatus})
+
+    return sendResponse(res,200,true,"Order status updated successfully",null,null);
+
+  }catch(e){
+    console.log(e);
+    return sendResponse(res,500,false,"Some Error Occured!",null,{e});
+  }
+}
+
+module.exports = {getAllOrdersOfAllUsers , getOrderDetails , updateOrderStatus}

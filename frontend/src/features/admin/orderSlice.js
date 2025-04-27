@@ -46,7 +46,23 @@ export const getOrderDetailsForAdmin = createAsyncThunk(
   }
 );
 
-
+export const updateOrderStatus = createAsyncThunk('/cart/updateOrderStatus',  async ({id,orderStatus}, { rejectWithValue }) => {
+    try {
+      let response;
+      await Util.call_Put_by_URI(
+        `admin/order/update/${id}`,
+        {orderStatus},
+        (res, status) => {
+          console.log(res,status);
+          response = res;
+        }
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 
 
 const adminOrderSlice = createSlice({
@@ -84,6 +100,6 @@ const adminOrderSlice = createSlice({
     }
 });
 
-export const {resetOrderDetails} = adminOrderSlice.reducer;
+export const {resetOrderDetails} = adminOrderSlice.actions;
 
 export default adminOrderSlice.reducer
