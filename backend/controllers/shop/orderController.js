@@ -105,7 +105,7 @@ const capturePayment = async (req, res) => {
       for (let item of order.cartItems) {
         const product = await Product.findById(item.productId);
         if (!product) {
-          return sendResponse(res, 404, false, `Product not found for ID: ${item.productId}`, null, null);
+          return sendResponse(res, 404, false, `Out of Stock: ${item.productId}`, null, null);
         }
 
         product.totalStock -= item.quantity;
