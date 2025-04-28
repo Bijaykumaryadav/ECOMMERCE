@@ -26,6 +26,7 @@ function CartItemsContent({cartItems}) {
     })
   }
 
+
   function handleCartItemDelete(getCartItem){
     dispatch(deleteCartItem({userId:user?._id,productId:getCartItem?.productId}))
     .unwrap()

@@ -32,27 +32,51 @@ const ProductDetailsPage = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const {toast} = useToast();
+  const { cartItems } = useSelector((state) => state.shopCart);
+
+
   
   const productDetails = useSelector((state) => 
     isDataFetched ? state.shopProducts.productDetails : null
   );
 
-  function handleAddToCart(getCurrentProductId) {
-  dispatch(addToCart({
-    userId: user?._id,
-    productId: getCurrentProductId,
-    quantity: 1
-  }))
-  .unwrap()
-  .then(data => {
-    if(data) {
-      dispatch(fetchCartItems(user?._id));
-      toast({
-        title: "Product is added to cart"
-      })
+  console.log(productDetails,"productDetails");
+
+
+  function handleAddToCart(getCurrentProductId, getTotalStock) {
+    let getCartItems = cartItems.items || [];
+
+    if (getCartItems.length) {
+      const indexOfCurrentItem = getCartItems.findIndex(
+        (item) => item.productId === getCurrentProductId
+      );
+      if (indexOfCurrentItem > -1) {
+        const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+        if (getQuantity + 1 > getTotalStock) {
+          toast({
+            title: `Only ${getQuantity} quantity can be added for this item`,
+            variant: "destructive",
+          });
+
+          return;
+        }
+      }
     }
-  })
-}
+    dispatch(
+      addToCart({
+        userId: user?._id,
+        productId: getCurrentProductId,
+        quantity: 1,
+      })
+    ).then((data) => {
+      if (data) {
+        dispatch(fetchCartItems(user?._id));
+        toast({
+          title: "Product is added to cart",
+        });
+      }
+    });
+  }
 
   useEffect(() => {
     const getProductData = async () => {
@@ -223,13 +247,23 @@ const ProductDetailsPage = () => {
 
               {/* Action Buttons */}
               <div className="grid grid-cols-2 gap-4">
-                <Button 
-                  size="lg" 
-                  className="w-full"
-                  disabled={ productDetails.totalStock === 0} onClick={()=> handleAddToCart(id)}
-                >
-                  <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
-                </Button>
+            {productDetails?.totalStock === 0 ? (
+              <Button className="w-full opacity-60 cursor-not-allowed">
+                Out of Stock
+              </Button>
+            ) : (
+              <Button
+                className="w-full"
+                onClick={() =>
+                  handleAddToCart(
+                    productDetails?._id,
+                    productDetails?.totalStock
+                  )
+                }
+              >
+                Add to Cart
+              </Button>
+            )}
                 <Button 
                   variant="secondary" 
                   size="lg" 
