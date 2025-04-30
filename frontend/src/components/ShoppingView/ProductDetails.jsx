@@ -43,40 +43,43 @@ const ProductDetailsPage = () => {
   console.log(productDetails,"productDetails");
 
 
-  function handleAddToCart(getCurrentProductId, getTotalStock) {
-    let getCartItems = cartItems.items || [];
+function handleAddToCart(getCurrentProductId, getTotalStock) {
+  let getCartItems = cartItems.items || [];
 
-    if (getCartItems.length) {
-      const indexOfCurrentItem = getCartItems.findIndex(
-        (item) => item.productId === getCurrentProductId
-      );
-      if (indexOfCurrentItem > -1) {
-        const getQuantity = getCartItems[indexOfCurrentItem].quantity;
-        if (getQuantity + 1 > getTotalStock) {
-          toast({
-            title: `Only ${getQuantity} quantity can be added for this item`,
-            variant: "destructive",
-          });
+  if (getCartItems.length) {
+    const indexOfCurrentItem = getCartItems.findIndex(
+      (item) => item.productId === getCurrentProductId
+    );
+    if (indexOfCurrentItem > -1) {
+      const getExistingQuantity = getCartItems[indexOfCurrentItem].quantity;
+      const totalRequested = getExistingQuantity + quantity;
 
-          return;
-        }
+      if (totalRequested > getTotalStock) {
+        toast({
+          title: `Only ${getTotalStock - getExistingQuantity} more item(s) can be added`,
+          variant: "destructive",
+        });
+        return;
       }
     }
-    dispatch(
-      addToCart({
-        userId: user?._id,
-        productId: getCurrentProductId,
-        quantity: 1,
-      })
-    ).then((data) => {
-      if (data) {
-        dispatch(fetchCartItems(user?._id));
-        toast({
-          title: "Product is added to cart",
-        });
-      }
-    });
   }
+
+  dispatch(
+    addToCart({
+      userId: user?._id,
+      productId: getCurrentProductId,
+      quantity,
+    })
+  ).then((data) => {
+    if (data) {
+      dispatch(fetchCartItems(user?._id));
+      toast({
+        title: "Product added to cart",
+      });
+    }
+  });
+}
+
 
   useEffect(() => {
     const getProductData = async () => {
