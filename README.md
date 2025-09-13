@@ -156,6 +156,3 @@ npm run prod
 **Bijay Kumar Yadav**
 📍 Bangalore, India
 💼 Full Stack Developer (MERN)
-
-
-Do you want me to also **add usage examples with screenshots** (like login, product page, cart, checkout) to make the README more professional for GitHub?
